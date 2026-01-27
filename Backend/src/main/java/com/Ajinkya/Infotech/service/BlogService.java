@@ -21,7 +21,7 @@ public class BlogService {
     public Blog createBlog(
             String title,
             String content,
-            MultipartFile image,
+            String image,
             boolean published
     ) throws IOException {
 
@@ -30,11 +30,8 @@ public class BlogService {
         blog.setSlug(generateSlug(title));
         blog.setContent(content);
         blog.setPublished(published);
+        blog.setCoverImage(image);
 
-        if (image != null && !image.isEmpty()) {
-            blog.setCoverImage(image.getBytes());
-            blog.setImageType(image.getContentType());
-        }
 
         return blogRepository.save(blog);
     }
@@ -43,7 +40,7 @@ public class BlogService {
             Long id,
             String title,
             String content,
-            MultipartFile image,
+            String image,
             boolean published
     ) throws IOException {
 
@@ -54,11 +51,10 @@ public class BlogService {
         blog.setSlug(generateSlug(title));
         blog.setContent(content);
         blog.setPublished(published);
-
-        if (image != null && !image.isEmpty()) {
-            blog.setCoverImage(image.getBytes());
-            blog.setImageType(image.getContentType());
+        if(image != null){
+           blog.setCoverImage(image);
         }
+
 
         return blogRepository.save(blog);
     }

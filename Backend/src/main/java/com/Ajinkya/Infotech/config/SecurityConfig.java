@@ -1,10 +1,10 @@
 package com.Ajinkya.Infotech.config;
 
-
 import com.Ajinkya.Infotech.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -64,6 +64,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/requestOtp").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/blogs", "/blogs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

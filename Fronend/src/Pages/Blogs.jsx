@@ -1,36 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useBlogs } from "../Context/BlogContext";
 
 const Blogs = () => {
-  const [blogs, setBlogs] = useState([]);
+  const { blogs, loading, fetchBlogs } = useBlogs();
   const navigate = useNavigate();
 
-  // 🔹 Mock API response (replace with real API later)
+  // 🔹 Fetch blogs from API
   useEffect(() => {
-    setBlogs([
-      {
-        id: 1,
-        title: "Why Learning Java Still Matters in 2025",
-        slug: "why-learning-java-still-matters",
-        content:
-          "Java continues to be one of the most in-demand programming languages across enterprises...",
-        coverImage:
-          "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
-        published: true,
-        createdAt: "2025-01-10"
-      },
-      {
-        id: 2,
-        title: "Full Stack Development Roadmap",
-        slug: "full-stack-development-roadmap",
-        content:
-          "A complete roadmap to becoming a successful full stack developer...",
-        coverImage: null,
-        published: true,
-        createdAt: "2025-01-05"
-      }
-    ]);
+    fetchBlogs();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-orange-600">
+        Loading blogs...
+      </div>
+    );
+  }
 
   return (
     <section className="min-h-screen pt-28 pb-20 bg-gradient-to-b from-white to-orange-50">
@@ -101,6 +88,13 @@ const Blogs = () => {
               </div>
             ))}
         </div>
+
+        {/* Empty state */}
+        {!loading && blogs.length === 0 && (
+          <p className="text-center text-gray-500 mt-10">
+            No blogs available
+          </p>
+        )}
       </div>
     </section>
   );

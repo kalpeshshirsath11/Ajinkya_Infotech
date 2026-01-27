@@ -27,14 +27,13 @@ public class Blog {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    // CORRECT FOR POSTGRES
 
-    @Basic(fetch = FetchType.LAZY)
+
+    //@Basic(fetch = FetchType.LAZY)
     @Column(name = "cover_image")
-    private byte[] coverImage;
+    private String coverImage;
 
-    @Column(name = "image_type")
-    private String imageType;
+
 
     @Column(nullable = false)
     private boolean published = false;

@@ -1,6 +1,5 @@
 package com.Ajinkya.Infotech.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,13 +19,25 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Course Name
     @Column(nullable = false, length = 150)
-    private String title;
+    private String courseName;
 
+    // Course Overview / Summary
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String courseOverview;
 
-    private String duration;
+    // Course Structure (modules, projects, format)
+    @Column(columnDefinition = "TEXT")
+    private String courseStructure;
+
+    // Duration & Commitment
+    @Column(length = 100)
+    private String durationAndCommitment;
+
+    // Target Audience
+    @Column(columnDefinition = "TEXT")
+    private String whoThisCourseIsFor;
 
     private BigDecimal price;
 
