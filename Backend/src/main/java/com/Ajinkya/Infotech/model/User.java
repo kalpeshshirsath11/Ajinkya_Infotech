@@ -1,6 +1,6 @@
 package com.Ajinkya.Infotech.model;
 
-import com.Ajinkya.Infotech.model.dto.RoleEnum;
+import com.Ajinkya.Infotech.Enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

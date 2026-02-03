@@ -1,8 +1,9 @@
 package com.Ajinkya.Infotech.controller;
 
+import com.Ajinkya.Infotech.Enums.RoleEnum;
+import com.Ajinkya.Infotech.dto.*;
 import com.Ajinkya.Infotech.model.Otp;
 import com.Ajinkya.Infotech.model.User;
-import com.Ajinkya.Infotech.model.dto.*;
 import com.Ajinkya.Infotech.service.CloudinaryService;
 import com.Ajinkya.Infotech.service.JwtService;
 import com.Ajinkya.Infotech.service.OtpService;
@@ -21,8 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
-
-import static com.Ajinkya.Infotech.model.dto.RoleEnum.STUDENT;
 
 @RestController("/user")
 public class UserController {

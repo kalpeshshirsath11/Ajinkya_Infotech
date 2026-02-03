@@ -8,6 +8,7 @@ import Register from "./Pages/Register";
 import VerifyOtp from "./Pages/VerifyOtp";
 import Blogs from "./Pages/Blogs";
 import BlogDetails from "./Pages/BlogDetailsPage";
+import Courses from "./Pages/Courses";
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/otp" element={<VerifyOtp />} />
                 <Route path = "/blogs" element={<Blogs/>}/>
                 <Route path="/blogs/:slug" element={<BlogDetails />} />
+                <Route path="/courses" element={<Courses/>}/>
 
               </Routes>
             </div>

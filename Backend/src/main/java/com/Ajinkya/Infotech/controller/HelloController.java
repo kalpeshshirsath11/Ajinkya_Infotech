@@ -1,7 +1,7 @@
 package com.Ajinkya.Infotech.controller;
 
 
-import com.Ajinkya.Infotech.model.dto.HelloDto;
+import com.Ajinkya.Infotech.dto.HelloDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

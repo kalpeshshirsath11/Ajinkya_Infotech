@@ -1,4 +1,4 @@
-package com.Ajinkya.Infotech.model.dto;
+package com.Ajinkya.Infotech.dto;
 
 
 import lombok.AllArgsConstructor;
