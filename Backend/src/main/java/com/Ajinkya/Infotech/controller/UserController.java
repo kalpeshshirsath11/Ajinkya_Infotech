@@ -1,7 +1,10 @@
 package com.Ajinkya.Infotech.controller;
 
 import com.Ajinkya.Infotech.Enums.RoleEnum;
-import com.Ajinkya.Infotech.dto.*;
+import com.Ajinkya.Infotech.dto.AuthResponse;
+import com.Ajinkya.Infotech.dto.LoginRequest;
+import com.Ajinkya.Infotech.dto.OtpDto;
+import com.Ajinkya.Infotech.dto.RegisterUserDto;
 import com.Ajinkya.Infotech.model.Otp;
 import com.Ajinkya.Infotech.model.User;
 import com.Ajinkya.Infotech.service.CloudinaryService;
@@ -23,7 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Optional;
 
-@RestController("/user")
+
+@RestController
 public class UserController {
 
     @Autowired

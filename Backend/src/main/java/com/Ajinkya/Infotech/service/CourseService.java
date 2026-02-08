@@ -92,4 +92,8 @@ public class CourseService {
                 .createdAt(course.getCreatedAt())
                 .build();
     }
+
+    public void deleteCourse(Long id) {
+        courseRepository.deleteById(id);
+    }
 }

@@ -3,9 +3,11 @@ package com.Ajinkya.Infotech.service;
 import com.Ajinkya.Infotech.model.User;
 import com.Ajinkya.Infotech.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,5 +29,9 @@ public class UserSerrvice {
 
     public Optional<String> getImageByEmail(String email) {
         return repo.findImageByEmail(email);
+    }
+
+    public List<User> getAll() {
+        return  repo.findAll();
     }
 }

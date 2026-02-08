@@ -1,5 +1,7 @@
 package com.Ajinkya.Infotech.service;
 
+import com.Ajinkya.Infotech.dto.StudentEnrollmentDTO;
+import com.Ajinkya.Infotech.dto.UserResponse;
 import com.Ajinkya.Infotech.model.Course;
 import com.Ajinkya.Infotech.model.Enrollment;
 import com.Ajinkya.Infotech.model.User;
@@ -35,6 +37,14 @@ public class EnrollmentService {
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
+        //  CHECK: already enrolled?
+        boolean alreadyEnrolled = enrollmentRepository
+                .existsByUserIdAndCourseId(request.getUserId(), request.getCourseId());
+
+        if (alreadyEnrolled) {
+            throw new RuntimeException("Student already enrolled in this course");
+        }
+
         boolean isNill = Boolean.TRUE.equals(request.getIsNill());
 
         BigDecimal pendingFees = isNill
@@ -53,6 +63,7 @@ public class EnrollmentService {
 
         return mapToResponse(enrollmentRepository.save(enrollment));
     }
+
 
     // ================= GET MY ENROLLMENTS =================
     public List<EnrollmentResponse> getMyEnrollments() {
@@ -126,4 +137,71 @@ public class EnrollmentService {
                 .enrolledAt(enrollment.getEnrolledAt())
                 .build();
     }
+    public List<UserResponse> getAll() {
+        return userRepository.findAll().stream()
+                .map(user -> UserResponse.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .email(user.getEmail())
+                        .mobileNumber(user.getMobileNumber())
+                        .imageUrl(user.getImageUrl())
+                        .isActive(user.getIsActive())
+                        .build()
+                ).toList();
+    }
+    public UserResponse getStudentWithEnrollments(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<StudentEnrollmentDTO> enrollmentDTOs =
+                user.getEnrollments().stream()
+                        .map(e -> StudentEnrollmentDTO.builder()
+                                .enrollmentId(e.getId())
+                                .courseId(e.getCourse().getId())
+                                .courseName(e.getCourse().getCourseName())
+                                .pendingFees(e.getPendingFees())
+                                .isNill(e.getIsNill())
+                                .status(e.getCompletionStatus())
+                                .build()
+                        ).toList();
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .mobileNumber(user.getMobileNumber())
+                .imageUrl(user.getImageUrl())
+                .isActive(user.getIsActive())
+                .enrollments(enrollmentDTOs)
+                .build();
+    }
+
+
+    public EnrollmentResponse updateEnrollment(
+            Long enrollmentId,
+            BigDecimal pendingFees,
+            Boolean isNill,
+            CompletionStatus status
+    ) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+
+        if (pendingFees != null) {
+            enrollment.setPendingFees(pendingFees);
+        }
+
+        if (isNill != null) {
+            enrollment.setIsNill(isNill);
+        }
+
+        if (status != null) {
+            enrollment.setStatus(String.valueOf(status));
+        }
+
+        enrollmentRepository.save(enrollment);
+
+        return mapToResponse(enrollment);
+    }
+
 }

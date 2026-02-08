@@ -1,12 +1,17 @@
 package com.Ajinkya.Infotech.controller;
 
 
-import com.Ajinkya.Infotech.dto.AssignEnrollmentRequest;
 import com.Ajinkya.Infotech.Enums.CompletionStatus;
+import com.Ajinkya.Infotech.dto.AssignEnrollmentRequest;
 import com.Ajinkya.Infotech.dto.EnrollmentResponse;
+import com.Ajinkya.Infotech.dto.EnrollmentUpdateRequest;
+import com.Ajinkya.Infotech.dto.UserResponse;
+import com.Ajinkya.Infotech.model.User;
 import com.Ajinkya.Infotech.service.EnrollmentService;
+import com.Ajinkya.Infotech.service.UserSerrvice;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +20,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/enrollments")
+@RequestMapping("/api/admin/enrollments/")
 @RequiredArgsConstructor
 public class EnrollmentController {
-
     private final EnrollmentService enrollmentService;
-
     // ' ADMIN — Assign enrollment to student
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/assign")
@@ -30,35 +33,44 @@ public class EnrollmentController {
         return ResponseEntity.ok(enrollmentService.assignEnrollment(request));
     }
 
-    // 👤 USER — Get own enrollments
-    @PreAuthorize("hasRole('USER')")
+    //  USER — Get own enrollments
+    @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/me")
     public ResponseEntity<List<EnrollmentResponse>> getMyEnrollments() {
         return ResponseEntity.ok(enrollmentService.getMyEnrollments());
     }
 
     //  ADMIN — Update fees
+    @PutMapping("/edit/{enrollmentId}")
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/{enrollmentId}/fees")
-    public ResponseEntity<EnrollmentResponse> updateFees(
+    public ResponseEntity<EnrollmentResponse> updateEnrollment(
             @PathVariable Long enrollmentId,
-            @RequestParam(required = false) BigDecimal pendingFees,
-            @RequestParam(required = false) Boolean isNill
+            @RequestBody EnrollmentUpdateRequest request
     ) {
         return ResponseEntity.ok(
-                enrollmentService.updateFees(enrollmentId, pendingFees, isNill)
+                enrollmentService.updateEnrollment(
+                        enrollmentId,
+                        request.getPendingFees(),
+                        request.getIsNill(),
+                        request.getStatus()
+                )
         );
     }
 
-    //  ADMIN — Update completion status
+
+    @GetMapping("/getUsers")
     @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/{enrollmentId}/completion")
-    public ResponseEntity<EnrollmentResponse> updateCompletionStatus(
-            @PathVariable Long enrollmentId,
-            @RequestParam CompletionStatus status
-    ) {
+    public ResponseEntity<List<UserResponse>> getAll(){
+        return new ResponseEntity<>(enrollmentService.getAll(), HttpStatus.OK);
+    }
+    @GetMapping("/students/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponse> getStudent(
+            @PathVariable Long id
+    ){
+        System.out.println("Running");
         return ResponseEntity.ok(
-                enrollmentService.updateCompletionStatus(enrollmentId, status)
+                enrollmentService.getStudentWithEnrollments(id)
         );
     }
 }

@@ -9,6 +9,14 @@ import VerifyOtp from "./Pages/VerifyOtp";
 import Blogs from "./Pages/Blogs";
 import BlogDetails from "./Pages/BlogDetailsPage";
 import Courses from "./Pages/Courses";
+import AdminDashboard from "./Pages/AdminDashboard";
+import AdminStudents from "./Pages/AdminStudents";
+import AdminStudentDetail from "./Pages/AdminStudentDetail";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AdminCourses from "./Pages/AdminCourses";
+
+
 
 
 function App() {
@@ -18,6 +26,7 @@ function App() {
     
       <BrowserRouter>
       
+      <ToastContainer position="top-right" autoClose={3000} />
         <div className="min-h-screen flex flex-col">
           <Navbar
             
@@ -37,6 +46,10 @@ function App() {
                 <Route path = "/blogs" element={<Blogs/>}/>
                 <Route path="/blogs/:slug" element={<BlogDetails />} />
                 <Route path="/courses" element={<Courses/>}/>
+                <Route path="/AdminDashboard" element={<AdminDashboard/>}/>
+                <Route path="/admin/students" element={<AdminStudents/>}/>
+                <Route path="/admin/students/:id" element={<AdminStudentDetail />} />
+                <Route path="/admin/course" element={<AdminCourses/>}/>
 
               </Routes>
             </div>

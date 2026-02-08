@@ -16,6 +16,5 @@ public class HelloController {
     public ResponseEntity<String> Hello(@RequestBody HelloDto req){
         return new ResponseEntity<>(req.getUsername(), HttpStatus.ACCEPTED);
 
-
     }
 }
