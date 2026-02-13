@@ -1,0 +1,63 @@
+
+
+services:
+  # 1. The Database (With AI Vector Support)
+  postgres-db:
+    image: pgvector/pgvector:pg16
+    container_name: infotech-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Manas_Pawar04
+      - POSTGRES_DB=infotech_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persist data even if container restarts
+
+  # 2. The Python Brain
+  ai-service:
+    build: ./Python
+    container_name: infotech-ai
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-db
+    env_file:
+      - ./Python/.env
+    # environment:
+    #   - DB_HOST=postgres-db      # Note: We use the service name, not 'localhost'
+    #   - DB_PORT=5432
+    #   - DB_NAME=infotech_db
+    #   - DB_USER=postgres
+    #   - DB_PASSWORD=password123
+    
+
+  # 3. The Spring Boot Body
+  spring-app:
+    build: ./SpringBackend
+    container_name: infotech-backend
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres-db
+      - ai-service
+    env_file:
+      - ./SpringBackend/.env
+    environment:
+      # Override application.properties settings here
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/infotech_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Manas_Pawar04
+      - PYTHON_SERVICE_URL=http://ai-service:8000  # Point to the AI service container
+
+  # 4. The Frontend
+  frontend:
+    build: ./Frontend
+    container_name: infotech-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - spring-app
+
+volumes:
+  postgres_data:
