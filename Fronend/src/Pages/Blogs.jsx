@@ -6,10 +6,16 @@ const Blogs = () => {
   const { blogs, loading, fetchBlogs } = useBlogs();
   const navigate = useNavigate();
 
-  // 🔹 Fetch blogs from API
   useEffect(() => {
     fetchBlogs();
   }, []);
+
+  // 🔥 Convert HTML → Plain text
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
 
   if (loading) {
     return (
@@ -22,6 +28,7 @@ const Blogs = () => {
   return (
     <section className="min-h-screen pt-28 pb-20 bg-gradient-to-b from-white to-orange-50">
       <div className="max-w-6xl mx-auto px-6">
+
         {/* Heading */}
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-orange-600">
@@ -77,8 +84,9 @@ const Blogs = () => {
                     {blog.title}
                   </h2>
 
+                  {/* CLEAN TEXT PREVIEW */}
                   <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">
-                    {blog.content}
+                    {stripHtml(blog.content).slice(0, 140)}...
                   </p>
 
                   <div className="mt-4 text-orange-600 font-medium text-sm">

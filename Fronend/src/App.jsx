@@ -15,6 +15,9 @@ import AdminStudentDetail from "./Pages/AdminStudentDetail";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminCourses from "./Pages/AdminCourses";
+import AdminBlogsPage from "./Pages/AdminBlogsPage";
+import AddBlogPage from "./Pages/AddBlogPage";
+import UpdateBlogPage from "./Pages/UpdateBlogPage";
 
 
 
@@ -50,9 +53,14 @@ function App() {
                 <Route path="/admin/students" element={<AdminStudents/>}/>
                 <Route path="/admin/students/:id" element={<AdminStudentDetail />} />
                 <Route path="/admin/course" element={<AdminCourses/>}/>
-
+                <Route path="/admin/blogs" element={<AdminBlogsPage/>}/>
+                <Route path="/admin/blogs/add" element={<AddBlogPage/>}/>
+                <Route path="/admin/blogs/edit/:id" element={<UpdateBlogPage/>}/>
               </Routes>
             </div>
+            
+  
+
           </main>
 
           <Footer />
