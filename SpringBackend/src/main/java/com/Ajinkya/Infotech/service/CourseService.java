@@ -1,6 +1,5 @@
 package com.Ajinkya.Infotech.service;
 
-
 import com.Ajinkya.Infotech.model.Course;
 import com.Ajinkya.Infotech.dto.CourseRequest;
 import com.Ajinkya.Infotech.dto.CourseResponse;
@@ -16,9 +15,12 @@ import java.util.List;
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final AIService aiService;
 
-    // CREATE
+    // ================= CREATE =================
+
     public CourseResponse addCourse(CourseRequest request) {
+
         Course course = Course.builder()
                 .courseName(request.getCourseName())
                 .courseOverview(request.getCourseOverview())
@@ -29,11 +31,28 @@ public class CourseService {
                 .isActive(request.getIsActive() != null ? request.getIsActive() : true)
                 .build();
 
-        return mapToResponse(courseRepository.save(course));
+        Course savedCourse = courseRepository.save(course);
+
+        // 🤖 Hook into AI
+        if (savedCourse.getIsActive()) {
+            String fullContent =
+                    "Course: " + savedCourse.getCourseName() +
+                            "\nOverview: " + savedCourse.getCourseOverview() +
+                            "\nStructure: " + savedCourse.getCourseStructure() +
+                            "\nDuration: " + savedCourse.getDurationAndCommitment() +
+                            "\nWho This Course Is For: " + savedCourse.getWhoThisCourseIsFor() +
+                            "\nPrice: ₹" + savedCourse.getPrice();
+
+            aiService.ingestContent(fullContent, "course-" + savedCourse.getId());
+        }
+
+        return mapToResponse(savedCourse);
     }
 
-    // UPDATE
+    // ================= UPDATE =================
+
     public CourseResponse updateCourse(Long id, UpdateCourseRequest request) {
+
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
@@ -58,11 +77,26 @@ public class CourseService {
         if (request.getIsActive() != null)
             course.setIsActive(request.getIsActive());
 
-        return mapToResponse(courseRepository.save(course));
+        Course savedCourse = courseRepository.save(course);
+
+        // 🤖 Hook into AI
+        if (Boolean.TRUE.equals(savedCourse.getIsActive())) {
+            String fullContent =
+                    "Course: " + savedCourse.getCourseName() +
+                            "\nOverview: " + savedCourse.getCourseOverview() +
+                            "\nStructure: " + savedCourse.getCourseStructure() +
+                            "\nDuration: " + savedCourse.getDurationAndCommitment() +
+                            "\nWho This Course Is For: " + savedCourse.getWhoThisCourseIsFor() +
+                            "\nPrice: ₹" + savedCourse.getPrice();
+
+            aiService.ingestContent(fullContent, "course-" + savedCourse.getId());
+        }
+
+        return mapToResponse(savedCourse);
     }
 
+    // ================= READ ALL =================
 
-    // READ ALL
     public List<CourseResponse> getAllCourses() {
         return courseRepository.findAll()
                 .stream()
@@ -70,15 +104,18 @@ public class CourseService {
                 .toList();
     }
 
-    // READ BY ID
+    // ================= READ BY ID =================
+
     public CourseResponse getCourseById(Long id) {
+
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
         return mapToResponse(course);
     }
 
-    // MAPPER
+    // ================= MAPPER =================
+
     private CourseResponse mapToResponse(Course course) {
         return CourseResponse.builder()
                 .id(course.getId())

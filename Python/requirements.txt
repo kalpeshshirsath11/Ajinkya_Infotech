@@ -1,11 +1,12 @@
 fastapi
 uvicorn
-psycopg2-binary
-pgvector
 python-dotenv
-langchain
-langchain-google-genai
+psycopg[binary]
+pgvector
 langchain-postgres
-google-generativeai
-langchain-chroma
-chromadb
+
+# AI Packages
+# We need to allow google-generativeai to be installed as a dependency
+# but we pin langchain-google-genai into a stable range.
+# AI
+google-genai

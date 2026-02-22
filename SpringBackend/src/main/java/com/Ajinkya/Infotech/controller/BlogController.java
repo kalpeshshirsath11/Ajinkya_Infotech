@@ -65,9 +65,8 @@ public class BlogController {
             @RequestParam(defaultValue = "true") boolean published
     ) throws IOException {
         String image_url = null;
-                cloudinaryService.uploadImage(image);
         if (image != null && !image.isEmpty()) {
-            image_url =cloudinaryService.uploadImage(image);;
+            image_url = cloudinaryService.uploadImage(image);
         }
         return blogService.createBlog(title, content, image_url, published);
     }
@@ -85,9 +84,8 @@ public class BlogController {
             @RequestParam(defaultValue = "true") boolean published
     ) throws IOException {
         String image_url = null;
-        cloudinaryService.uploadImage(image);
         if (image != null && !image.isEmpty()) {
-            image_url =cloudinaryService.uploadImage(image);
+            image_url = cloudinaryService.uploadImage(image);
         }
         return blogService.updateBlog(id, title, content, image_url, published);
     }
