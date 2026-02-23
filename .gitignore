@@ -1,0 +1,24 @@
+# Secrets
+.env
+**/.env
+
+# Dependency & Build Directories
+node_modules/
+target/
+build/
+dist/
+__pycache__/
+*.class
+
+# IDE & OS Files
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Windows reserved device name artifact
+nul

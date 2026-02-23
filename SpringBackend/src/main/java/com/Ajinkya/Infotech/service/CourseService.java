@@ -1,24 +1,28 @@
 package com.Ajinkya.Infotech.service;
 
-
-import com.Ajinkya.Infotech.model.Course;
 import com.Ajinkya.Infotech.dto.CourseRequest;
 import com.Ajinkya.Infotech.dto.CourseResponse;
 import com.Ajinkya.Infotech.dto.UpdateCourseRequest;
+import com.Ajinkya.Infotech.model.Course;
 import com.Ajinkya.Infotech.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final AIService aiService;
 
-    // CREATE
+    // ================= CREATE =================
+
     public CourseResponse addCourse(CourseRequest request) {
+
         Course course = Course.builder()
                 .courseName(request.getCourseName())
                 .courseOverview(request.getCourseOverview())
@@ -29,11 +33,20 @@ public class CourseService {
                 .isActive(request.getIsActive() != null ? request.getIsActive() : true)
                 .build();
 
-        return mapToResponse(courseRepository.save(course));
+        Course savedCourse = courseRepository.save(course);
+
+        // 🤖 Hook into AI (Same pattern as BlogService)
+        if (Boolean.TRUE.equals(savedCourse.getIsActive())) {
+            ingestCourseToAI(savedCourse);
+        }
+
+        return mapToResponse(savedCourse);
     }
 
-    // UPDATE
+    // ================= UPDATE =================
+
     public CourseResponse updateCourse(Long id, UpdateCourseRequest request) {
+
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
@@ -58,11 +71,24 @@ public class CourseService {
         if (request.getIsActive() != null)
             course.setIsActive(request.getIsActive());
 
-        return mapToResponse(courseRepository.save(course));
+        Course savedCourse = courseRepository.save(course);
+
+        // 🤖 Hook into AI
+        if (Boolean.TRUE.equals(savedCourse.getIsActive())) {
+            ingestCourseToAI(savedCourse);
+        }
+
+        return mapToResponse(savedCourse);
     }
 
+    // ================= DELETE =================
 
-    // READ ALL
+    public void deleteCourse(Long id) {
+        courseRepository.deleteById(id);
+    }
+
+    // ================= PUBLIC =================
+
     public List<CourseResponse> getAllCourses() {
         return courseRepository.findAll()
                 .stream()
@@ -70,7 +96,6 @@ public class CourseService {
                 .toList();
     }
 
-    // READ BY ID
     public CourseResponse getCourseById(Long id) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
@@ -78,7 +103,25 @@ public class CourseService {
         return mapToResponse(course);
     }
 
-    // MAPPER
+    // ================= AI INGEST =================
+
+    private void ingestCourseToAI(Course course) {
+
+        String fullContent =
+                "Course Title: " + course.getCourseName() +
+                "\n\nOverview:\n" + course.getCourseOverview() +
+                "\n\nStructure:\n" + course.getCourseStructure() +
+                "\n\nDuration:\n" + course.getDurationAndCommitment() +
+                "\n\nWho This Course Is For:\n" + course.getWhoThisCourseIsFor() +
+                "\n\nPrice: ₹" + course.getPrice();
+
+        aiService.ingestContent(fullContent, "course-" + course.getId());
+
+        log.info("Course {} ingested into AI", course.getId());
+    }
+
+    // ================= MAPPER =================
+
     private CourseResponse mapToResponse(Course course) {
         return CourseResponse.builder()
                 .id(course.getId())
@@ -91,9 +134,5 @@ public class CourseService {
                 .isActive(course.getIsActive())
                 .createdAt(course.getCreatedAt())
                 .build();
-    }
-
-    public void deleteCourse(Long id) {
-        courseRepository.deleteById(id);
     }
 }

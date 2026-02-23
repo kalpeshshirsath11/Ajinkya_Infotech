@@ -1,20 +1,21 @@
 package com.Ajinkya.Infotech.service;
 
-
 import com.Ajinkya.Infotech.model.Blog;
 import com.Ajinkya.Infotech.repository.BlogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class BlogService {
 
-    @Autowired
-    private BlogRepository blogRepository;
+    private final BlogRepository blogRepository;
+    private final AIService aiService;
 
     // ================= ADMIN =================
 
@@ -32,8 +33,18 @@ public class BlogService {
         blog.setPublished(published);
         blog.setCoverImage(image);
 
+        Blog savedBlog = blogRepository.save(blog);
 
-        return blogRepository.save(blog);
+        // 🤖 Hook into AI
+        if (published) {
+            String fullContent = "Blog Title: " + savedBlog.getTitle()
+                    + "\n\n"
+                    + savedBlog.getContent();
+
+            aiService.ingestContent(fullContent, "blog-" + savedBlog.getId());
+        }
+
+        return savedBlog;
     }
 
     public Blog updateBlog(
@@ -51,12 +62,23 @@ public class BlogService {
         blog.setSlug(generateSlug(title));
         blog.setContent(content);
         blog.setPublished(published);
-        if(image != null){
-           blog.setCoverImage(image);
+
+        if (image != null) {
+            blog.setCoverImage(image);
         }
 
+        Blog savedBlog = blogRepository.save(blog);
 
-        return blogRepository.save(blog);
+        // 🤖 Hook into AI
+        if (published) {
+            String fullContent = "Blog Title: " + savedBlog.getTitle()
+                    + "\n\n"
+                    + savedBlog.getContent();
+
+            aiService.ingestContent(fullContent, "blog-" + savedBlog.getId());
+        }
+
+        return savedBlog;
     }
 
     public void deleteBlog(Long id) {
@@ -70,7 +92,7 @@ public class BlogService {
     }
 
     public Blog getBlogBySlug(String slug) {
-        return (Blog) blogRepository.findBySlug(slug)
+        return blogRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("Blog not found"));
     }
 
@@ -89,4 +111,3 @@ public class BlogService {
                 .replaceAll("(^-|-$)", "");
     }
 }
-
