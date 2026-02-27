@@ -105,6 +105,28 @@ def ingest_text(text: str, source_id: str):
 
 
 
+def _detect_language(question: str) -> str:
+    """Use a quick Gemini call to detect the language of the user's question."""
+    detection_prompt = (
+        "Detect the language of the following text. "
+        "If it is written in Romanized Hindi (Hindi in English letters), reply 'Hindi'. "
+        "If it is written in Romanized Marathi (Marathi in English letters), reply 'Marathi'. "
+        "Reply with ONLY the language name, nothing else.\n\n"
+        f"Text: {question}"
+    )
+    try:
+        resp = client.models.generate_content(
+            model="gemini-2.5-flash-lite",
+            contents=detection_prompt,
+        )
+        detected = resp.text.strip()
+        print(f"🌐 Detected language: {detected}")
+        return detected
+    except Exception as e:
+        print(f"⚠️ Language detection failed, defaulting to English: {e}")
+        return "English"
+
+
 def answer_question(question: str):
     store = get_vector_store()
 
@@ -115,9 +137,20 @@ def answer_question(question: str):
     if not context.strip():
         return "I couldn't find any relevant information."
 
-    prompt = f"""
-You are a friendly and helpful AI assistant for the Ajinkya Infotech website.
-Your job is to answer user questions based on the website's content provided below.
+    # Step 1: Detect the language of the user's question
+    detected_language = _detect_language(question)
+
+    # Step 2: Build a system instruction that enforces the reply language
+    system_instruction = (
+        f"You are a friendly and helpful AI assistant for the Ajinkya Infotech website. "
+        f"You MUST reply ONLY in {detected_language}. "
+        f"Every single word of your response must be in {detected_language}. "
+        f"Do NOT use English unless the detected language IS English. "
+        f"This is your most important rule and overrides everything else."
+    )
+
+    # Step 3: Build the user prompt — language mandate repeated at the END for recency bias
+    prompt = f"""Answer the user's question using ONLY the website content provided below.
 
 Instructions:
 - Use ALL the context provided below to give a thorough, informative answer.
@@ -131,13 +164,17 @@ Website Content:
 {context}
 
 User Question: {question}
-"""
+
+⚠️ CRITICAL LANGUAGE RULE: Your ENTIRE response MUST be written in {detected_language}. Do NOT reply in English unless the user's language is English."""
 
     for attempt in range(3):
         try:
             response = client.models.generate_content(
                 model="gemini-2.5-flash-lite",
                 contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_instruction,
+                ),
             )
             return response.text
         except Exception as e:
