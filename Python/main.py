@@ -3,11 +3,23 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from rag_service import ingest_text, answer_question
-
+from fastapi.middleware.cors import CORSMiddleware
 # Load secrets
 load_dotenv()
 
 app = FastAPI()
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Data Models (defines what JSON we expect) ---
 class IngestRequest(BaseModel):

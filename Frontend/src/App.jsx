@@ -18,6 +18,7 @@ import AdminCourses from "./Pages/AdminCourses";
 import AdminBlogsPage from "./Pages/AdminBlogsPage";
 import AddBlogPage from "./Pages/AddBlogPage";
 import UpdateBlogPage from "./Pages/UpdateBlogPage";
+import ChatBotModal from "./Components/ChatBotModal";
 
 
 
@@ -36,34 +37,30 @@ function App() {
           />
 
           <main className="flex-grow pt-18">
-            {/* HOME wrapper only */}
-            <div>
-              <Routes>
-                <Route
-                  path="/"
-                  element={<Home/>}
-                />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/otp" element={<VerifyOtp />} />
-                <Route path = "/blogs" element={<Blogs/>}/>
-                <Route path="/blogs/:slug" element={<BlogDetails />} />
-                <Route path="/courses" element={<Courses/>}/>
-                <Route path="/AdminDashboard" element={<AdminDashboard/>}/>
-                <Route path="/admin/students" element={<AdminStudents/>}/>
-                <Route path="/admin/students/:id" element={<AdminStudentDetail />} />
-                <Route path="/admin/course" element={<AdminCourses/>}/>
-                <Route path="/admin/blogs" element={<AdminBlogsPage/>}/>
-                <Route path="/admin/blogs/add" element={<AddBlogPage/>}/>
-                <Route path="/admin/blogs/edit/:id" element={<UpdateBlogPage/>}/>
-              </Routes>
-            </div>
-            
-  
+  <div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/otp" element={<VerifyOtp />} />
+      <Route path="/blogs" element={<Blogs />} />
+      <Route path="/blogs/:slug" element={<BlogDetails />} />
+      <Route path="/courses" element={<Courses />} />
+      <Route path="/AdminDashboard" element={<AdminDashboard />} />
+      <Route path="/admin/students" element={<AdminStudents />} />
+      <Route path="/admin/students/:id" element={<AdminStudentDetail />} />
+      <Route path="/admin/course" element={<AdminCourses />} />
+      <Route path="/admin/blogs" element={<AdminBlogsPage />} />
+      <Route path="/admin/blogs/add" element={<AddBlogPage />} />
+      <Route path="/admin/blogs/edit/:id" element={<UpdateBlogPage />} />
+    </Routes>
+  </div>
+</main>
 
-          </main>
+{/* CHATBOT GLOBAL */}
+<ChatBotModal />
 
-          <Footer />
+<Footer />
         </div>
         
       </BrowserRouter>
