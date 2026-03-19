@@ -1,5 +1,6 @@
 package com.Ajinkya.Infotech.dto;
 
+import com.Ajinkya.Infotech.Enums.RoleEnum;
 import jakarta.persistence.Column;
 import lombok.Data;
 
@@ -10,5 +11,7 @@ public class RegisterUserDto {
 
     private String mobileNumber;
     private String password;
+
+    public RoleEnum Role;
 }
 

@@ -1,7 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 export default function About() {
+  const { t } = useTranslation();
+
   return (
     <section className="w-full py-20 bg-white">
       {/* Heading */}
@@ -13,7 +16,7 @@ export default function About() {
         className="text-center mb-14"
       >
         <h2 className="text-4xl font-bold text-orange-600">
-          About Ajinkya Infotech
+          {t('about.heading')}
         </h2>
         <div className="w-24 h-1 bg-orange-500 mx-auto mt-4 rounded-full" />
       </motion.div>
@@ -28,11 +31,9 @@ export default function About() {
           viewport={{ once: true }}
           className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl p-8 shadow-xl hover:scale-105 transition-transform"
         >
-          <h3 className="text-xl font-semibold mb-4">Who We Are</h3>
+          <h3 className="text-xl font-semibold mb-4">{t('about.card1.title')}</h3>
           <p className="text-sm leading-relaxed">
-            Ajinkya Infotech is the premier Software Training Institute in Nashik,
-            Maharashtra, focused on building strong digital and technical skills
-            for future-ready careers.
+            {t('about.card1.content')}
           </p>
         </motion.div>
 
@@ -45,12 +46,10 @@ export default function About() {
           className="bg-white border border-orange-200 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow"
         >
           <h3 className="text-xl font-semibold text-orange-600 mb-4">
-            What We Offer
+            {t('about.card2.title')}
           </h3>
           <p className="text-gray-700 text-sm leading-relaxed">
-            With a wide range of industry-focused courses, experienced trainers,
-            and hands-on practical learning, we prepare students to succeed in
-            today’s competitive job market.
+            {t('about.card2.content')}
           </p>
         </motion.div>
 
@@ -62,11 +61,9 @@ export default function About() {
           viewport={{ once: true }}
           className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl p-8 shadow-xl hover:scale-105 transition-transform"
         >
-          <h3 className="text-xl font-semibold mb-4">Why Choose Us</h3>
+          <h3 className="text-xl font-semibold mb-4">{t('about.card3.title')}</h3>
           <p className="text-sm leading-relaxed">
-            State-of-the-art facilities, career-oriented training, real-world
-            projects, and continuous support make Ajinkya Infotech the right
-            choice for your professional growth.
+            {t('about.card3.content')}
           </p>
         </motion.div>
       </div>
@@ -81,10 +78,10 @@ export default function About() {
       >
         <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-2xl p-8 text-center shadow-xl">
           <p className="text-lg mb-4">
-            Join us and embrace a world of endless opportunities.
+            {t('about.cta.text')}
           </p>
           <button className="bg-white text-orange-600 px-6 py-3 rounded-full font-semibold hover:bg-orange-100 transition">
-            Contact Us Today
+            {t('about.cta.button')}
           </button>
         </div>
       </motion.div>

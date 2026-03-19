@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import UpdateCourseModal from "../Components/UpdateCourseModel";
-
+import AddCourseModal from "../Components/AddCourseModal";
 import { toast } from "react-toastify";
-
 
 const AdminCourses = () => {
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");
-  const navigate = useNavigate();
-    const [selectedCourse, setSelectedCourse] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+
   const fetchCourses = async () => {
     try {
       const { data } = await api.get("/api/admin/courses");
       setCourses(data);
     } catch (err) {
       console.error(err);
+      toast.error("Failed to load courses");
     }
   };
 
@@ -25,19 +25,17 @@ const AdminCourses = () => {
   }, []);
 
   const deleteCourse = async (id) => {
-  if (!window.confirm("Delete this course?")) return;
+    if (!window.confirm("Delete this course?")) return;
 
-  try {
-    await api.delete(`/api/admin/courses/${id}`);
-    setCourses(courses.filter((c) => c.id !== id));
-
-    toast.success("Course deleted successfully!");
-  } catch (err) {
-    console.error("Delete failed", err);
-    toast.error("Error occurred while deleting course!");
-  }
-};
-
+    try {
+      await api.delete(`/api/admin/courses/${id}`);
+      setCourses(courses.filter((c) => c.id !== id));
+      toast.success("Course deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Error occurred while deleting course!");
+    }
+  };
 
   const filtered = courses.filter((c) =>
     c.courseName.toLowerCase().includes(search.toLowerCase())
@@ -47,12 +45,21 @@ const AdminCourses = () => {
     <div className="min-h-screen pt-28 px-6 bg-gray-50">
       <div className="max-w-7xl mx-auto">
 
-        {/* Heading */}
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">
-          Manage Courses
-        </h1>
+        {/* HEADER */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-800">
+            Manage Courses
+          </h1>
 
-        {/* Search Bar */}
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl font-medium shadow-md"
+          >
+            + Add Course
+          </button>
+        </div>
+
+        {/* SEARCH */}
         <input
           type="text"
           placeholder="Search courses..."
@@ -62,7 +69,7 @@ const AdminCourses = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* Cards Grid */}
+        {/* GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {filtered.map((course) => (
             <div
@@ -101,22 +108,20 @@ const AdminCourses = () => {
                 </p>
               </div>
 
-              {/* Buttons */}
+              {/* BUTTONS */}
               <div className="flex gap-3 mt-6">
                 <button
-                    onClick={() => setSelectedCourse(course)}
-                    className="flex-1 bg-orange-500 hover:bg-orange-600 
-                     text-white py-2 rounded-xl font-medium cursor-pointer"
+                  onClick={() => setSelectedCourse(course)}
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 
+                             text-white py-2 rounded-xl font-medium"
                 >
-                    Update
+                  Update
                 </button>
-
 
                 <button
                   onClick={() => deleteCourse(course.id)}
                   className="flex-1 bg-red-500 hover:bg-red-600 
-                             text-white py-2 rounded-xl font-medium cursor-pointer"
-                            
+                             text-white py-2 rounded-xl font-medium"
                 >
                   Delete
                 </button>
@@ -125,21 +130,30 @@ const AdminCourses = () => {
           ))}
         </div>
 
-        {/* Empty State */}
+        {/* EMPTY STATE */}
         {filtered.length === 0 && (
           <p className="text-gray-500 mt-10 text-center">
             No courses found.
           </p>
         )}
       </div>
-      {selectedCourse && (
-  <UpdateCourseModal
-    course={selectedCourse}
-    onClose={() => setSelectedCourse(null)}
-    onUpdated={fetchCourses}
-  />
-)}
 
+      {/* UPDATE MODAL */}
+      {selectedCourse && (
+        <UpdateCourseModal
+          course={selectedCourse}
+          onClose={() => setSelectedCourse(null)}
+          onUpdated={fetchCourses}
+        />
+      )}
+
+      {/* ADD MODAL */}
+      {showAddModal && (
+        <AddCourseModal
+          onClose={() => setShowAddModal(false)}
+          onAdded={fetchCourses}
+        />
+      )}
     </div>
   );
 };

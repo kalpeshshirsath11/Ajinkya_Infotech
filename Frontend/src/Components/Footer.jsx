@@ -1,9 +1,12 @@
 import { FaPhoneAlt, FaEnvelope, FaGlobe, FaMapMarkerAlt } from "react-icons/fa";
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400
-                  bg-[length:200%_200%] animate-gradient 
+                  bg-[length:200%_200%] animate-gradient
                   text-white ">
 
       <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -11,37 +14,36 @@ const Footer = () => {
         {/* Company Info */}
         <div>
           <h2 className="text-2xl font-extrabold tracking-wide mb-4">
-            Ajinkya Infotech
+            {t('footer.company.name')}
           </h2>
 
           <p className="text-sm leading-relaxed text-orange-100">
-            A professional software training institute dedicated to building
-            strong technical foundations and industry-ready careers.
+            {t('footer.company.description')}
           </p>
 
           <p className="mt-4 text-sm text-orange-200">
-            Nashik, Maharashtra, India
+            {t('footer.company.location')}
           </p>
         </div>
 
         {/* Contact Details */}
         <div>
-          <h2 className="text-xl font-semibold mb-5">Get in Touch</h2>
+          <h2 className="text-xl font-semibold mb-5">{t('footer.contact.heading')}</h2>
 
           <div className="space-y-4 text-sm">
             <p className="flex items-center gap-3 text-orange-100 hover:text-white transition">
               <FaPhoneAlt className="text-orange-200" />
-              <span>+91 98765 43210</span>
+              <span>{t('footer.contact.phone')}</span>
             </p>
 
             <p className="flex items-center gap-3 text-orange-100 hover:text-white transition">
               <FaEnvelope className="text-orange-200" />
-              <span>contact@ajinkyainfotech.com</span>
+              <span>{t('footer.contact.email')}</span>
             </p>
 
             <p className="flex items-center gap-3 text-orange-100 hover:text-white transition">
               <FaGlobe className="text-orange-200" />
-              <span>www.ajinkyainfotech.com</span>
+              <span>{t('footer.contact.website')}</span>
             </p>
           </div>
         </div>
@@ -50,7 +52,7 @@ const Footer = () => {
         <div>
           <h2 className="text-xl font-semibold mb-5 flex items-center gap-2">
             <FaMapMarkerAlt className="text-orange-200" />
-            Our Location
+            {t('footer.location.heading')}
           </h2>
 
           <div className="overflow-hidden rounded-xl shadow-xl border border-orange-300/40">
@@ -69,11 +71,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-orange-400/50 text-center py-5 text-sm text-orange-100">
-        © {new Date().getFullYear()}{" "}
-        <span className="font-semibold text-white">
-          Ajinkya Infotech
-        </span>
-        . All rights reserved.
+        {t('footer.copyright').replace('2026', new Date().getFullYear())}
       </div>
     </footer>
   );

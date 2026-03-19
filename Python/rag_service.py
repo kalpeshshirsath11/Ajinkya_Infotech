@@ -101,7 +101,7 @@ def ingest_text(text: str, source_id: str):
 
     store.add_documents([doc])
 
-    print(f"✅ Indexed document: {source_id}")
+    print(f"Indexed document: {source_id}")
 
 
 

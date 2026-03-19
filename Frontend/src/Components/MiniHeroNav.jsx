@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 
 const MiniHeroNav = ({
   scrollToAbout,
@@ -6,6 +7,7 @@ const MiniHeroNav = ({
   scrollToContact,
   activeSection,
 }) => {
+  const { t } = useTranslation();
   const [hovered, setHovered] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -48,7 +50,7 @@ const MiniHeroNav = ({
           onClick={scrollToAbout}
           className={`px-5 py-1.5 rounded-full text-sm font-medium text-white transition-all duration-300 ${getBgColor("about")}`}
         >
-          About Us
+          {t('nav.mini.aboutUs')}
         </button>
 
         {/* ACHIEVEMENTS */}
@@ -58,7 +60,7 @@ const MiniHeroNav = ({
           onClick={scrollToAchievements}
           className={`px-5 py-1.5 rounded-full text-sm font-medium text-white transition-all duration-300 ${getBgColor("achievements")}`}
         >
-          Achievements
+          {t('nav.mini.achievements')}
         </button>
 
         {/* CONTACT */}
@@ -68,7 +70,7 @@ const MiniHeroNav = ({
           onClick={scrollToContact}
           className={`px-5 py-1.5 rounded-full text-sm font-medium text-white transition-all duration-300 ${getBgColor("contact")}`}
         >
-          Contact Us
+          {t('nav.mini.contactUs')}
         </button>
       </div>
     </div>

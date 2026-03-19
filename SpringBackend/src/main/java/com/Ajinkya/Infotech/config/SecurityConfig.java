@@ -64,8 +64,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/requestOtp").permitAll()
+
+                        //  allow public hero data
+                        .requestMatchers(HttpMethod.GET, "/api/hero/active").permitAll()
+
+                        //  blogs & courses already ok
                         .requestMatchers(HttpMethod.GET, "/blogs", "/blogs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/courses", "/api/courses/**").permitAll()
+
+                        //  protect admin APIs
+                        .requestMatchers("/api/hero/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->

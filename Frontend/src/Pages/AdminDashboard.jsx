@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaUsers, FaBookOpen, FaPenFancy } from "react-icons/fa";
+import { FaUsers, FaBookOpen, FaPenFancy,FaImages } from "react-icons/fa";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const AdminDashboard = () => {
         </h1>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <Card
             icon={<FaUsers />}
             title="Students"
@@ -45,6 +45,11 @@ const AdminDashboard = () => {
             icon={<FaPenFancy />}
             title="Blogs"
             onClick={() => navigate("/admin/blogs")}
+          />
+          <Card
+            icon={<FaImages />}
+            title="Hero Section"
+            onClick={() => navigate("/admin/hero")}
           />
         </div>
       </div>

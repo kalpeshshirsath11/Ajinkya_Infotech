@@ -55,8 +55,9 @@ public class UserController {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
+        user.setRole(dto.getRole());
 
-        user.setRole(RoleEnum.STUDENT);
+
         user.setIsActive(true);
         if(file == null || file.isEmpty()){
             user.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhVSHxKxeD9Tdg65juWHA_tU_Hyt89DgJ3qQ&s");
@@ -90,7 +91,7 @@ public class UserController {
             user.setName(userotp.get().getName());
             user.setPassword(userotp.get().getPassword());
             user.setEmail(userotp.get().getEmail());
-            user.setRole(RoleEnum.STUDENT);
+            user.setRole(userotp.get().getRole());
             user.setIsActive(true);
 
 

@@ -1,35 +1,34 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-
-/* ---------- DATA (JSON) ---------- */
-const achievementsData = [
-  {
-    subject: "Industry-Oriented Training",
-    content:
-      "Our courses are designed to meet real-world industry requirements, helping students gain hands-on experience and job-ready skills.",
-    image:
-      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d"
-  },
-  {
-    subject: "Experienced Trainers",
-    content:
-      "Learn from highly experienced trainers who bring deep industry knowledge and mentorship into every session.",
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978"
-  },
-  {
-    subject: "Student Success Stories",
-    content:
-      "Hundreds of students have successfully started their IT careers through our structured training and placement guidance.",
-    image:
-      "https://images.unsplash.com/photo-1524178232363-1fb2b075b655"
-  }
-];
+import { useTranslation } from 'react-i18next';
 
 /* ---------- COMPONENT ---------- */
 export default function Achievements() {
+  const { t } = useTranslation();
   const sectionRefs = useRef([]);
   const [visibleItems, setVisibleItems] = useState([]);
+
+  /* ---------- DATA (Translated) ---------- */
+  const achievementsData = [
+    {
+      subject: t('achievements.item1.title'),
+      content: t('achievements.item1.content'),
+      image:
+        "https://images.unsplash.com/photo-1521737604893-d14cc237f11d"
+    },
+    {
+      subject: t('achievements.item2.title'),
+      content: t('achievements.item2.content'),
+      image:
+        "https://images.unsplash.com/photo-1552664730-d307ca884978"
+    },
+    {
+      subject: t('achievements.item3.title'),
+      content: t('achievements.item3.content'),
+      image:
+        "https://images.unsplash.com/photo-1524178232363-1fb2b075b655"
+    }
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -61,7 +60,7 @@ export default function Achievements() {
         className="text-center mb-16"
       >
         <h2 className="text-4xl font-bold text-orange-600">
-          Our Achievements
+          {t('achievements.heading')}
         </h2>
         <div className="w-24 h-1 bg-orange-500 mx-auto mt-4 rounded-full" />
       </motion.div>
