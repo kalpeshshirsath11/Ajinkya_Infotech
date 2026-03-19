@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaClock, FaRupeeSign, FaBookOpen } from "react-icons/fa";
 import axios from "axios";
 import api from "../api/axios";
+import { useTranslation } from 'react-i18next';
 
 const dummyCourses = [
   {
@@ -25,6 +26,7 @@ const dummyCourses = [
 ];
 
 const Courses = () => {
+  const { t } = useTranslation();
   const [courses, setCourses] = useState(dummyCourses);
   const [loading, setLoading] = useState(false);
 
@@ -58,18 +60,17 @@ const Courses = () => {
                      bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500
                      bg-clip-text text-transparent"
         >
-          Our Courses
+          {t('pages.courses.heading')}
         </h1>
         <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-          Industry-focused courses designed to build strong fundamentals,
-          practical skills, and job-ready confidence.
+          {t('pages.courses.subtitle')}
         </p>
       </div>
 
       {/* Loading */}
       {loading && (
         <p className="text-center text-orange-600 font-semibold">
-          Loading courses...
+          {t('pages.courses.loading')}
         </p>
       )}
 
@@ -104,7 +105,7 @@ const Courses = () => {
 
               <div className="text-sm">
                 <span className="font-semibold text-orange-600">
-                  Structure:
+                  {t('pages.courses.label.structure')}
                 </span>{" "}
                 {course.courseStructure}
               </div>
@@ -116,7 +117,7 @@ const Courses = () => {
 
               <div className="text-sm">
                 <span className="font-semibold text-orange-600">
-                  For:
+                  {t('pages.courses.label.targetAudience')}
                 </span>{" "}
                 {course.whoThisCourseIsFor}
               </div>
@@ -137,7 +138,7 @@ const Courses = () => {
                            bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400
                            text-white hover:opacity-90 transition"
               >
-                View Details
+                {t('pages.courses.button.viewDetails')}
               </button>
             </div>
           </div>

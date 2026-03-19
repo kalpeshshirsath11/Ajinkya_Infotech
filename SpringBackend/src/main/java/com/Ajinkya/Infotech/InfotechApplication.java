@@ -25,7 +25,7 @@ public class InfotechApplication {
 		SpringApplication.run(InfotechApplication.class, args);
 	}
 
-	 @Bean
+	@Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }

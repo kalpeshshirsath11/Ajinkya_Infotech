@@ -4,7 +4,9 @@ import com.Ajinkya.Infotech.dto.CourseRequest;
 import com.Ajinkya.Infotech.dto.CourseResponse;
 import com.Ajinkya.Infotech.dto.UpdateCourseRequest;
 import com.Ajinkya.Infotech.model.Course;
+import com.Ajinkya.Infotech.model.User;
 import com.Ajinkya.Infotech.repository.CourseRepository;
+import com.Ajinkya.Infotech.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,9 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final AIService aiService;
+
+
+    private final UserRepo repo;
 
     // ================= CREATE =================
 

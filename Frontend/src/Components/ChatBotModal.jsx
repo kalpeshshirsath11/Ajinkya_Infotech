@@ -87,7 +87,7 @@ const ChatBotModal = () => {
       <button
         onClick={() => setOpen(true)}
         className="chatbot-button fixed bottom-6 right-6 
-        bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400
+        bg-gradient-to-r from-amber-200 via-orange-400 to-amber-200
         text-white w-14 h-14 rounded-full shadow-xl 
         flex items-center justify-center text-xl 
         hover:scale-110 transition z-50"

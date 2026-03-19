@@ -3,5 +3,462 @@
   "courses": "Courses",
   "blogs": "Blogs",
   "login": "Login",
-  "ask": "Ask something..."
+  "profile": "Profile",
+  "logout": "Logout",
+  "ask": "Ask something...",
+  "about": {
+    "heading": "About Ajinkya Infotech",
+    "card1": {
+      "title": "Who We Are",
+      "content": "Ajinkya Infotech is the premier Software Training Institute in Nashik, Maharashtra, focused on building strong digital and technical skills for future-ready careers."
+    },
+    "card2": {
+      "title": "What We Offer",
+      "content": "With a wide range of industry-focused courses, experienced trainers, and hands-on practical learning, we prepare students to succeed in today's competitive job market."
+    },
+    "card3": {
+      "title": "Why Choose Us",
+      "content": "State-of-the-art facilities, career-oriented training, real-world projects, and continuous support make Ajinkya Infotech the right choice for your professional growth."
+    },
+    "cta": {
+      "text": "Join us and embrace a world of endless opportunities.",
+      "button": "Contact Us Today"
+    }
+  },
+  "achievements": {
+    "heading": "Our Achievements",
+    "item1": {
+      "title": "Industry-Oriented Training",
+      "content": "Our courses are designed to meet real-world industry requirements, helping students gain hands-on experience and job-ready skills."
+    },
+    "item2": {
+      "title": "Experienced Trainers",
+      "content": "Learn from highly experienced trainers who bring deep industry knowledge and mentorship into every session."
+    },
+    "item3": {
+      "title": "Student Success Stories",
+      "content": "Hundreds of students have successfully started their IT careers through our structured training and placement guidance."
+    }
+  },
+  "modals": {
+    "assignEnrollment": {
+      "title": "Assign Enrollment",
+      "label": {
+        "pendingFees": "Pending Fees",
+        "noPendingFees": "No pending fees"
+      },
+      "placeholder": {
+        "amount": "Enter amount"
+      }
+    },
+    "enrollCourse": {
+      "title": "Enroll in Course",
+      "placeholder": {
+        "search": "Search course by name..."
+      },
+      "label": {
+        "duration": "Duration:",
+        "fees": "Fees: ₹"
+      }
+    },
+    "editEnrollment": {
+      "title": "Edit Enrollment",
+      "label": {
+        "pendingFees": "Pending Fees",
+        "isNill": "Is Nill",
+        "status": "Status"
+      },
+      "option": {
+        "no": "NO",
+        "yes": "YES"
+      },
+      "status": {
+        "notStarted": "Not Started",
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      }
+    },
+    "updateCourse": {
+      "title": "Update Course",
+      "label": {
+        "courseName": "Course Name",
+        "overview": "Course Overview",
+        "structure": "Course Structure",
+        "duration": "Duration & Commitment",
+        "price": "Price (₹)",
+        "targetAudience": "Who This Course Is For",
+        "isActive": "Active Course"
+      }
+    }
+  },
+  "chatbot": {
+    "header": {
+      "title": "Ajinkya Infotech Bot"
+    },
+    "input": {
+      "placeholder": "Ask something..."
+    },
+    "loading": {
+      "text": "Loading"
+    },
+    "button": {
+      "send": "Send",
+      "close": "✕",
+      "emoji": "💬"
+    },
+    "error": {
+      "message": "Server error. Please try again."
+    }
+  },
+  "contact": {
+    "heading": "Let's Build Your IT Career",
+    "description": "Have questions about courses, batches, or placements? Reach out to Ajinkya Infotech and take your first confident step toward a successful tech career.",
+    "button": {
+      "call": "📞 Call Now",
+      "whatsapp": "💬 WhatsApp",
+      "email": "✉️ Email Us"
+    }
+  },
+  "footer": {
+    "company": {
+      "name": "Ajinkya Infotech",
+      "description": "A professional software training institute dedicated to building strong technical foundations and industry-ready careers.",
+      "location": "Nashik, Maharashtra, India"
+    },
+    "contact": {
+      "heading": "Get in Touch",
+      "phone": "+91 98765 43210",
+      "email": "contact@ajinkyainfotech.com",
+      "website": "www.ajinkyainfotech.com"
+    },
+    "location": {
+      "heading": "Our Location"
+    },
+    "copyright": "© 2026 Ajinkya Infotech. All rights reserved."
+  },
+  "hero": {
+    "slide1": {
+      "title": "Write. Share. Inspire.",
+      "description": "Publish your thoughts and reach readers worldwide."
+    },
+    "slide2": {
+      "title": "Tech, Stories & Ideas",
+      "description": "A platform built for developers and creators."
+    },
+    "slide3": {
+      "title": "Your Voice Matters",
+      "description": "Start blogging today and grow your audience."
+    },
+    "button": {
+      "prev": "‹",
+      "next": "›"
+    }
+  },
+  "nav": {
+    "mini": {
+      "aboutUs": "About Us",
+      "achievements": "Achievements",
+      "contactUs": "Contact Us"
+    },
+    "hamburger": "☰"
+  },
+  "languages": {
+    "marathi": "🇮🇳 मराठी",
+    "english": "🇬🇧 EN"
+  },
+  "editor": {
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "h1": "H1",
+      "h2": "H2",
+      "list": "List",
+      "bulletList": "• List",
+      "orderedList": "1. List",
+      "blockquote": "Quote",
+      "codeBlock": "Code",
+      "image": "Image",
+      "link": "Link",
+      "youtube": "YouTube",
+      "undo": "Undo",
+      "redo": "Redo"
+    },
+    "prompts": {
+      "imageUrl": "Enter Image URL",
+      "url": "Enter URL",
+      "youtubeUrl": "Enter YouTube URL"
+    }
+  },
+  "buttons": {
+    "cancel": "Cancel",
+    "assign": "Assign",
+    "assigning": "Assigning...",
+    "enroll": "Enroll",
+    "close": "X",
+    "save": "Save",
+    "saving": "Saving...",
+    "update": "Update",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "toasts": {
+    "enrollmentSuccess": "Student enrolled successfully 🎉",
+    "enrollmentError": "Enrollment failed Or Student Already registered",
+    "courseUpdateSuccess": "Course updated successfully!",
+    "courseUpdateError": "Update failed!",
+    "blogCreateSuccess": "Blog created successfully",
+    "blogCreateError": "Failed to create blog",
+    "blogDeleteSuccess": "Blog deleted",
+    "blogDeleteError": "Delete failed",
+    "blogLoadError": "Failed to load blogs",
+    "courseDeleteSuccess": "Course deleted successfully!",
+    "courseDeleteError": "Error occurred while deleting course!",
+    "blogUpdateSuccess": "Blog updated successfully",
+    "blogUpdateError": "Update failed"
+  },
+  "pages": {
+    "addBlog": {
+      "input": {
+        "title": {
+          "placeholder": "Write your blog title..."
+        }
+      },
+      "button": {
+        "editor": "Write Blog",
+        "html": "Paste HTML",
+        "publish": "Publish Blog",
+        "publishing": "Publishing..."
+      },
+      "textarea": {
+        "html": {
+          "placeholder": "Paste your full HTML here..."
+        }
+      },
+      "label": {
+        "coverImage": "Cover Image",
+        "publishNow": "Publish immediately"
+      }
+    },
+    "adminBlogs": {
+      "button": {
+        "addBlog": "+ Add Blog"
+      },
+      "input": {
+        "search": {
+          "placeholder": "Search blog..."
+        }
+      },
+      "empty": {
+        "message": "No blogs found"
+      },
+      "confirm": {
+        "deleteBlog": "Delete this blog?"
+      }
+    },
+    "adminCourses": {
+      "heading": "Manage Courses",
+      "input": {
+        "search": {
+          "placeholder": "Search courses..."
+        }
+      },
+      "label": {
+        "duration": "Duration:",
+        "price": "Price:"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "empty": {
+        "message": "No courses found."
+      },
+      "confirm": {
+        "deleteCourse": "Delete this course?"
+      }
+    },
+    "adminDashboard": {
+      "heading": "Admin Control Panel",
+      "card": {
+        "students": "Students",
+        "courses": "Courses",
+        "blogs": "Blogs"
+      }
+    },
+    "adminStudentDetail": {
+      "heading": "Enrollments",
+      "button": {
+        "addEnrollment": "+ Enroll"
+      },
+      "table": {
+        "column": {
+          "course": "Course",
+          "pendingFees": "Pending Fees",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "empty": "No enrollments yet"
+      },
+      "fees": {
+        "nill": "Nill"
+      }
+    },
+    "adminStudents": {
+      "heading": "Students",
+      "input": {
+        "search": {
+          "placeholder": "Search by name or phone..."
+        }
+      },
+      "table": {
+        "column": {
+          "name": "Name",
+          "phone": "Phone"
+        }
+      },
+      "loading": "Loading students...",
+      "empty": {
+        "message": "No students found"
+      }
+    },
+    "blogDetails": {
+      "loading": "Loading blog...",
+      "notFound": "Blog not found 😕"
+    },
+    "blogs": {
+      "heading": "Ajinkya Infotech Blogs",
+      "subtitle": "Insights, tutorials, and career guidance from industry experts",
+      "noCoverImage": "No Cover Image",
+      "empty": {
+        "message": "No blogs available"
+      },
+      "card": {
+        "readMore": "Read More →"
+      },
+      "loading": "Loading blogs..."
+    },
+    "courses": {
+      "heading": "Our Courses",
+      "subtitle": "Industry-focused courses designed to build strong fundamentals, practical skills, and job-ready confidence.",
+      "label": {
+        "structure": "Structure:",
+        "targetAudience": "For:"
+      },
+      "button": {
+        "viewDetails": "View Details"
+      },
+      "loading": "Loading courses..."
+    },
+    "login": {
+      "heading": "Login",
+      "input": {
+        "email": {
+          "placeholder": "Email"
+        },
+        "password": {
+          "placeholder": "Password"
+        }
+      },
+      "button": {
+        "submit": "Login",
+        "loading": "Logging in..."
+      },
+      "error": {
+        "message": "Invalid email or password"
+      },
+      "text": {
+        "noAccount": "Don't have an account?"
+      },
+      "link": {
+        "register": "Register"
+      }
+    },
+    "register": {
+      "heading": "Register",
+      "input": {
+        "name": {
+          "placeholder": "Name"
+        },
+        "email": {
+          "placeholder": "Email"
+        },
+        "phone": {
+          "placeholder": "Mobile Number"
+        },
+        "password": {
+          "placeholder": "Password"
+        }
+      },
+      "label": {
+        "uploadImage": "Click to upload profile image"
+      },
+      "icon": {
+        "camera": "📷"
+      },
+      "button": {
+        "generateOtp": "Generate Otp",
+        "sendingOtp": "Sending OTP..."
+      },
+      "text": {
+        "hasAccount": "Already have an account?"
+      },
+      "link": {
+        "login": "Login"
+      },
+      "error": {
+        "invalidPhone": "Please enter a valid 10-digit mobile number",
+        "otpFailed": "Failed to send OTP. Please try again.",
+        "invalidImage": "Please upload a valid image",
+        "imageTooLarge": "Image must be under 5MB",
+        "imageProcessing": "Failed to process image"
+      }
+    },
+    "updateBlog": {
+      "input": {
+        "title": {
+          "placeholder": "Write your blog title..."
+        }
+      },
+      "button": {
+        "editor": "Write Blog",
+        "html": "Paste HTML",
+        "update": "Update Blog",
+        "updating": "Updating..."
+      },
+      "textarea": {
+        "html": {
+          "placeholder": "Paste your full HTML here..."
+        }
+      },
+      "label": {
+        "coverImage": "Cover Image",
+        "publishNow": "Publish immediately"
+      },
+      "loading": "Loading...",
+      "error": {
+        "notFound": "Blog not found",
+        "loadFailed": "Failed to load blog"
+      }
+    },
+    "verifyOtp": {
+      "heading": "Verify OTP",
+      "text": {
+        "otpSent": "We've sent a 6-digit OTP to"
+      },
+      "input": {
+        "otp": {
+          "placeholder": "Enter OTP"
+        }
+      },
+      "button": {
+        "verify": "Verify OTP",
+        "verifying": "Verifying...",
+        "resendOtp": "Resend OTP"
+      },
+      "error": {
+        "invalidOtp": "Invalid or expired OTP. Please try again.",
+        "invalidFormat": "Please enter a 6-digit OTP"
+      }
+    }
+  }
 }

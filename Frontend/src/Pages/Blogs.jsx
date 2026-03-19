@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBlogs } from "../Context/BlogContext";
+import { useTranslation } from 'react-i18next';
 
 const Blogs = () => {
+  const { t } = useTranslation();
   const { blogs, loading, fetchBlogs } = useBlogs();
   const navigate = useNavigate();
 
@@ -20,7 +22,7 @@ const Blogs = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-orange-600">
-        Loading blogs...
+        {t('pages.blogs.loading')}
       </div>
     );
   }
@@ -32,10 +34,10 @@ const Blogs = () => {
         {/* Heading */}
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-orange-600">
-            Ajinkya Infotech Blogs
+            {t('pages.blogs.heading')}
           </h1>
           <p className="text-gray-600 mt-3">
-            Insights, tutorials, and career guidance from industry experts
+            {t('pages.blogs.subtitle')}
           </p>
         </div>
 
@@ -69,7 +71,7 @@ const Blogs = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-orange-400 text-sm">
-                      No Cover Image
+                      {t('pages.blogs.noCoverImage')}
                     </div>
                   )}
                 </div>
@@ -90,7 +92,7 @@ const Blogs = () => {
                   </p>
 
                   <div className="mt-4 text-orange-600 font-medium text-sm">
-                    Read More →
+                    {t('pages.blogs.card.readMore')}
                   </div>
                 </div>
               </div>
@@ -100,7 +102,7 @@ const Blogs = () => {
         {/* Empty state */}
         {!loading && blogs.length === 0 && (
           <p className="text-center text-gray-500 mt-10">
-            No blogs available
+            {t('pages.blogs.empty.message')}
           </p>
         )}
       </div>

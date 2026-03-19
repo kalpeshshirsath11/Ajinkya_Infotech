@@ -27,11 +27,9 @@ const compressImage = (file) =>
             return;
           }
 
-          const compressedFile = new File(
-            [blob],
-            file.name,
-            { type: "image/jpeg" }
-          );
+          const compressedFile = new File([blob], file.name, {
+            type: "image/jpeg",
+          });
 
           resolve(compressedFile);
         },
@@ -51,6 +49,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [password, setPassword] = useState("");
+
+  const [role, setRole] = useState("STUDENT"); 
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -89,8 +89,8 @@ const Register = () => {
     setError("");
 
     try {
-      await axios.post(
-        "http://localhost:8082/requestOtp",
+      await api.post(
+        "requestOtp",
         formData,
         {
           headers: {
@@ -126,6 +126,7 @@ const Register = () => {
     formData.append("email", email);
     formData.append("mobile_number", mobileNumber);
     formData.append("password", password);
+    formData.append("role", role); // ✅ NEW
 
     if (image) {
       formData.append("image", image);
@@ -168,6 +169,16 @@ const Register = () => {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-orange-400"
           />
+
+          {/* Role Dropdown ✅ */}
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-orange-400 bg-white"
+          >
+            <option value="STUDENT">Student</option>
+            <option value="TEACHER">Teacher</option>
+          </select>
 
           {/* Mobile */}
           <input

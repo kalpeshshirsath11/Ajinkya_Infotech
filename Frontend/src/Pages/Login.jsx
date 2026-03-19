@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,7 +22,7 @@ const Login = () => {
       await login(email, password);
       navigate("/");
     } catch (err) {
-      setError("Invalid email or password");
+      setError(t('pages.login.error.message'));
     } finally {
       setLoading(false);
     }
@@ -33,14 +35,14 @@ const Login = () => {
         className="bg-white p-8 rounded shadow-md w-96"
       >
         <h2 className="text-2xl font-bold mb-4 text-orange-600 text-center">
-          Login
+          {t('pages.login.heading')}
         </h2>
 
         {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t('pages.login.input.email.placeholder')}
           className="w-full mb-3 p-2 border rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -48,7 +50,7 @@ const Login = () => {
 
         <input
           type="password"
-          placeholder="Password"
+          placeholder={t('pages.login.input.password.placeholder')}
           className="w-full mb-4 p-2 border rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -59,17 +61,17 @@ const Login = () => {
           disabled={loading}
           className="w-full bg-orange-500 text-white py-2 rounded"
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? t('pages.login.button.loading') : t('pages.login.button.submit')}
         </button>
 
         {/* 👇 Register link */}
         <p className="text-center text-sm mt-4">
-          Don&apos;t have an account?{" "}
+          {t('pages.login.text.noAccount')}{" "}
           <span
             onClick={() => navigate("/register")}
             className="text-orange-600 cursor-pointer hover:underline"
           >
-            Register
+            {t('pages.login.link.register')}
           </span>
         </p>
       </form>

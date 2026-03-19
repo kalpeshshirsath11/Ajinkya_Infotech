@@ -19,6 +19,8 @@ import AdminBlogsPage from "./Pages/AdminBlogsPage";
 import AddBlogPage from "./Pages/AddBlogPage";
 import UpdateBlogPage from "./Pages/UpdateBlogPage";
 import ChatBotModal from "./Components/ChatBotModal";
+import ProfilePage from "./Pages/ProfilePage";
+import HeroAdmin from "./Pages/HeroAdmin";
 
 
 
@@ -53,6 +55,8 @@ function App() {
       <Route path="/admin/blogs" element={<AdminBlogsPage />} />
       <Route path="/admin/blogs/add" element={<AddBlogPage />} />
       <Route path="/admin/blogs/edit/:id" element={<UpdateBlogPage />} />
+      <Route path="/profile" element={<ProfilePage/>}/>
+      <Route path="/admin/hero" element={<HeroAdmin />} />
     </Routes>
   </div>
 </main>
