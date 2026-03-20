@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 import DOMPurify from "dompurify";
-
+import api from "../api/axios";
 const BlogDetails = () => {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
@@ -12,7 +12,7 @@ const BlogDetails = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`http://localhost:8082/blogs/${slug}`);
+        const res = await api.get(`blogs/${slug}`);
         setBlog(res.data);
       } catch (err) {
         console.error("Failed to load blog", err);

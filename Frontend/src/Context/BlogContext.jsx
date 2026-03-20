@@ -6,7 +6,7 @@ const BlogsContext = createContext(null);
 
 // optional: central axios instance
 const api = axios.create({
-  baseURL: "http://localhost:8082",
+  baseURL: "https://ajinkya-infotech-1.onrender.com/",
 });
 
 export const BlogsProvider = ({ children }) => {

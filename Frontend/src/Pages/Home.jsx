@@ -22,7 +22,7 @@ const Home = () => {
   const scrollToContact = () =>
     contactRef.current?.scrollIntoView({ behavior: "smooth" });
 
-  // 🔥 Scroll spy observer
+  //  Scroll spy observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {

@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
 const VerifyOtp = () => {
 
@@ -28,8 +29,8 @@ const VerifyOtp = () => {
 
   const otpData = { otp, email };
 
-  await axios.post(
-    "http://localhost:8082/register",
+  await api.post(
+    "/register",
     otpData
   );
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 
 /* ================= IMAGE COMPRESSION ================= */
 const compressImage = (file) =>
@@ -22,10 +22,7 @@ const compressImage = (file) =>
 
       canvas.toBlob(
         (blob) => {
-          if (!blob) {
-            reject(new Error("Image compression failed"));
-            return;
-          }
+          if (!blob) return reject(new Error("Compression failed"));
 
           const compressedFile = new File([blob], file.name, {
             type: "image/jpeg",
@@ -49,8 +46,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [password, setPassword] = useState("");
-
-  const [role, setRole] = useState("STUDENT"); 
+  const [role, setRole] = useState("STUDENT");
 
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -78,7 +74,7 @@ const Register = () => {
       setImage(compressedImage);
       setPreview(URL.createObjectURL(compressedImage));
       setError("");
-    } catch (err) {
+    } catch {
       setError("Failed to process image");
     }
   };
@@ -89,23 +85,19 @@ const Register = () => {
     setError("");
 
     try {
-      await api.post(
-        "requestOtp",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await api.post("/requestOtp", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       navigate("/otp", {
         state: { email },
       });
     } catch (err) {
+      console.error(err);
       setError(
-        err.response?.data?.message ||
-        "Failed to send OTP. Please try again."
+        err.response?.data || "Failed to send OTP. Please try again."
       );
     } finally {
       setLoading(false);
@@ -124,9 +116,9 @@ const Register = () => {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
-    formData.append("mobile_number", mobileNumber);
+    formData.append("mobileNumber", mobileNumber); // ✅ FIXED
     formData.append("password", password);
-    formData.append("role", role); // ✅ NEW
+    formData.append("Role", role); // ✅ FIXED (capital R)
 
     if (image) {
       formData.append("image", image);
@@ -150,6 +142,7 @@ const Register = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+
           {/* Name */}
           <input
             type="text"
@@ -170,7 +163,7 @@ const Register = () => {
             className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-orange-400"
           />
 
-          {/* Role Dropdown ✅ */}
+          {/* Role */}
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
@@ -200,7 +193,7 @@ const Register = () => {
             className="w-full px-3 py-2 border rounded focus:ring-2 focus:ring-orange-400"
           />
 
-          {/* Image Upload */}
+          {/* 🔥 IMAGE UI (UNCHANGED as you wanted) */}
           <div className="border-2 border-dashed border-orange-400 rounded-lg p-4 text-center">
             <input
               type="file"
@@ -234,7 +227,7 @@ const Register = () => {
             disabled={loading}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded transition disabled:opacity-50"
           >
-            {loading ? "Sending OTP..." : "Generate Otp"}
+            {loading ? "Sending OTP..." : "Generate OTP"}
           </button>
         </form>
 

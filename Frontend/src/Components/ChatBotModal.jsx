@@ -49,7 +49,7 @@ const ChatBotModal = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/chat",
+        "https://ajinkya-infotech-2.onrender.com/chat",
         { question: message },
         {
           headers: {

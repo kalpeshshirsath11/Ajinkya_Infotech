@@ -12,7 +12,7 @@ const Blogs = () => {
     fetchBlogs();
   }, []);
 
-  // 🔥 Convert HTML → Plain text
+  //  Convert HTML → Plain text
   const stripHtml = (html) => {
     const div = document.createElement("div");
     div.innerHTML = html;

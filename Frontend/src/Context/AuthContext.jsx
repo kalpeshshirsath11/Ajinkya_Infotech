@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   // 🔐 LOGIN (based on your backend response)
   const login = async (email, password) => {
-    const res = await fetch("http://localhost:8082/login", {
+    const res = await fetch("https://ajinkya-infotech-1.onrender.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
