@@ -20,7 +20,7 @@ public class AIService {
     // It is best practice to externalize URLs to application.properties
     // Assuming you might add: python.service.url=http://localhost:8000 in application.properties
     // If not, you can keep the hardcoded string or use @Value("${python.service.url:http://localhost:8000}")
-    @Value("${python.service.url:http://localhost:8000}")
+    @Value("${python.service.url:https://ajinkya-infotech-2.onrender.com/}")
     private   String pythonServiceUrl;
 
 

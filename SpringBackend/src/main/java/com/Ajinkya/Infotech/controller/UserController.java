@@ -107,6 +107,32 @@ public class UserController {
                     .body("Incorrect otp");
         }
     }
+    @PostMapping(value = "/admin/register", consumes = "multipart/form-data")
+    public ResponseEntity<String> registerAdmin(
+            @ModelAttribute RegisterUserDto dto,
+            @RequestPart(value = "image", required = false) MultipartFile file
+    ) throws Exception {
+
+        User user = new User();
+
+        user.setName(dto.getName());
+        user.setPassword(encoder.encode(dto.getPassword()));
+        user.setEmail(dto.getEmail());
+        user.setRole(RoleEnum.ADMIN);
+
+        if (file == null || file.isEmpty()) {
+            user.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhVSHxKxeD9Tdg65juWHA_tU_Hyt89DgJ3qQ&s");
+        } else {
+            String url = cloudinaryService.uploadImage(file);
+            user.setImageUrl(url);
+        }
+
+        userService.adduser(user);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body("Correct");
+    }
 
 
 

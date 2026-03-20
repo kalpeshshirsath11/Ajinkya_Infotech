@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) //  THIS WAS MISSING
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/requestOtp").permitAll()
+                        .requestMatchers("/login", "/register", "/requestOtp","/admin/register").permitAll()
 
                         //  allow public hero data
                         .requestMatchers(HttpMethod.GET, "/api/hero/active").permitAll()
@@ -88,7 +88,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:5173","https://ajinkya-infotech.vercel.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
