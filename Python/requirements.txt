@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+python-dotenv
+psycopg[binary]
+pgvector
+langchain-postgres
+
+# AI Packages
+# We need to allow google-generativeai to be installed as a dependency
+# but we pin langchain-google-genai into a stable range.
+# AI
+google-genai
