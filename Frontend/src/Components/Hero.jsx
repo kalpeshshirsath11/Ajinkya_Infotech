@@ -1,35 +1,52 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 function Hero() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [slides, setSlides] = useState([]);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
+  //  Check admin from localStorage safely
+  useEffect(() => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user?.role === "ADMIN") {
+        setIsAdmin(true);
+      }
+    } catch (e) {
+      setIsAdmin(false);
+    }
+  }, []);
+
+  //  Fallback images (your updated ones)
   const fallbackSlides = [
     {
       title: t("hero.slide1.title"),
       desc: t("hero.slide1.description"),
       image:
-        "https://lh3.googleusercontent.com/p/AF1QipN5qFrr1A5hItfNc3Wqs7G0k2TQC7C4ztxfD6sq=s1360-w1360-h1020-rw",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlNt7J5MMNQ4N5JPnd37yQAYEGdrqCcd9CVw&s",
     },
     {
       title: t("hero.slide2.title"),
       desc: t("hero.slide2.description"),
       image:
-        "https://lh3.googleusercontent.com/p/AF1QipMguVdU0JhQYHgLXu_r1tIv5pHRPeF5Kj8y6DJO=s1360-w1360-h1020-rw",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyujvSqfbywxCBFmpHTsD8Ei1hxOfqmp9yVQ&s",
     },
     {
       title: t("hero.slide3.title"),
       desc: t("hero.slide3.description"),
       image:
-        "https://lh3.googleusercontent.com/p/AF1QipOpPLbrPC3ZVnJbwcFF9ceO1T6Kfigt8vhz6_xf=s1360-w1360-h1020-rw",
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQ54t6rExzKBfJlLLAL5_PAjE4A2RtvBfzaA&s",
     },
   ];
 
+  //  Fetch slides from backend
   const fetchSlides = async () => {
     try {
       const res = await api.get("/api/hero/active");
@@ -61,7 +78,7 @@ function Hero() {
     fetchSlides();
   }, []);
 
-  // Auto slide
+  // ✅ Auto slide
   useEffect(() => {
     if (slides.length === 0) return;
 
@@ -72,6 +89,7 @@ function Hero() {
     return () => clearInterval(interval);
   }, [slides]);
 
+  // ✅ Loading state
   if (loading) {
     return (
       <div className="h-[600px] flex items-center justify-center">
@@ -82,7 +100,7 @@ function Hero() {
 
   return (
     <div className="relative w-full h-[600px] overflow-hidden">
-
+      
       {/* SLIDES */}
       {slides.map((slide, index) => (
         <div
@@ -107,13 +125,24 @@ function Hero() {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
             {slides[current]?.title}
           </h1>
-          <p className="text-lg md:text-xl text-gray-200">
+
+          <p className="text-lg md:text-xl text-gray-200 mb-6">
             {slides[current]?.desc}
           </p>
+
+          {/* 🔥 Admin Button (Only for ADMIN) */}
+          {isAdmin && (
+            <button
+              onClick={() => navigate("/admindashboard")}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-lg transition duration-300"
+            >
+              Admin Dashboard
+            </button>
+          )}
         </div>
       </div>
 
-      {/* LEFT */}
+      {/* LEFT BUTTON */}
       <button
         onClick={() =>
           setCurrent((prev) => (prev - 1 + slides.length) % slides.length)
@@ -123,7 +152,7 @@ function Hero() {
         ‹
       </button>
 
-      {/* RIGHT */}
+      {/* RIGHT BUTTON */}
       <button
         onClick={() =>
           setCurrent((prev) => (prev + 1) % slides.length)
