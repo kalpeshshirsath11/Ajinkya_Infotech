@@ -19,7 +19,7 @@ def init_db():
             password=os.getenv("DB_PASSWORD")
         )
         cur = conn.cursor()
-        print("✅ Connected to Database!")
+        print(" Connected to Database!")
 
         # 1. Ensure Vector Extension is ON
         cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
@@ -36,7 +36,7 @@ def init_db():
             );
         """)
 
-        print("✅ Table 'vector_store' created.")
+        print(" Table 'vector_store' created.")
 
         # 3. Create Search Index (IVFFlat) for speed
         cur.execute("""
@@ -45,15 +45,15 @@ def init_db():
             USING ivfflat (embedding vector_cosine_ops)
             WITH (lists = 100);
         """)
-        print("✅ Index created.")
+        print(" Index created.")
 
         conn.commit()
         cur.close()
         conn.close()
-        print("🚀 Setup Complete!")
+        print(" Setup Complete!")
 
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f" Error: {e}")
 
 if __name__ == "__main__":
     init_db()

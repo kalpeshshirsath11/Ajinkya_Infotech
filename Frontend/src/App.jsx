@@ -4,7 +4,6 @@ import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
-import Register from "./Pages/Register";
 import VerifyOtp from "./Pages/VerifyOtp";
 import Blogs from "./Pages/Blogs";
 import BlogDetails from "./Pages/BlogDetailsPage";
@@ -19,8 +18,8 @@ import AdminBlogsPage from "./Pages/AdminBlogsPage";
 import AddBlogPage from "./Pages/AddBlogPage";
 import UpdateBlogPage from "./Pages/UpdateBlogPage";
 import ChatBotModal from "./Components/ChatBotModal";
-import ProfilePage from "./Pages/ProfilePage";
 import HeroAdmin from "./Pages/HeroAdmin";
+import TeacherBlogs from "./Pages/TeacherBlogs";
 
 
 
@@ -43,7 +42,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      
       <Route path="/otp" element={<VerifyOtp />} />
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/blogs/:slug" element={<BlogDetails />} />
@@ -55,7 +54,8 @@ function App() {
       <Route path="/admin/blogs" element={<AdminBlogsPage />} />
       <Route path="/admin/blogs/add" element={<AddBlogPage />} />
       <Route path="/admin/blogs/edit/:id" element={<UpdateBlogPage />} />
-      <Route path="/profile" element={<ProfilePage/>}/>
+      <Route path="/myblogs" element={<TeacherBlogs/>}/>
+      
       <Route path="/admin/hero" element={<HeroAdmin />} />
     </Routes>
   </div>

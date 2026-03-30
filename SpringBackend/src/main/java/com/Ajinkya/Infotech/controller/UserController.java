@@ -3,117 +3,112 @@ package com.Ajinkya.Infotech.controller;
 import com.Ajinkya.Infotech.Enums.RoleEnum;
 import com.Ajinkya.Infotech.dto.AuthResponse;
 import com.Ajinkya.Infotech.dto.LoginRequest;
-import com.Ajinkya.Infotech.dto.OtpDto;
 import com.Ajinkya.Infotech.dto.RegisterUserDto;
-import com.Ajinkya.Infotech.model.Otp;
 import com.Ajinkya.Infotech.model.User;
-import com.Ajinkya.Infotech.service.CloudinaryService;
 import com.Ajinkya.Infotech.service.JwtService;
-import com.Ajinkya.Infotech.service.OtpService;
 import com.Ajinkya.Infotech.service.UserSerrvice;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Optional;
-
+import java.util.UUID;
 
 @RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserSerrvice userService;
+    private final UserSerrvice userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwt;
 
-    @Autowired
-    private OtpService otpService;
-    @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtService jwt;
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    @Autowired
-    CloudinaryService cloudinaryService;
-    @PostMapping(
-            value = "/requestOtp",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
-    public ResponseEntity<String> requestOtp(
-            @ModelAttribute RegisterUserDto dto,
-            @RequestPart(value = "image", required = false) MultipartFile file
-    ) throws IOException {
-        Otp user = new Otp();
+
+    // =========================================================
+    // 1. REGISTER USER (ONLY ADMIN)
+    // =========================================================
+    @PostMapping("/admin/register")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> registerUser(@RequestBody RegisterUserDto dto) {
+
+        User user = new User();
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
+        user.setMobileNumber(dto.getMobileNumber());
         user.setRole(dto.getRole());
-
-
         user.setIsActive(true);
-        if(file == null || file.isEmpty()){
-            user.setImageUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhVSHxKxeD9Tdg65juWHA_tU_Hyt89DgJ3qQ&s");
-        }
-        else {
-            String url = cloudinaryService.uploadImage(file);
-            user.setImageUrl(url);
-        }
 
+        // Generate random password
+        String rawPassword = UUID.randomUUID().toString().substring(0, 8);
+        user.setPassword(encoder.encode(rawPassword));
 
+        // Optional: first login flag
+        user.setIsFirstLogin(true);
 
-        otpService.add(user);
+        userService.adduser(user);
 
-        return new ResponseEntity<>("Otp Sent successfullyy",HttpStatus.OK);
+        // TODO: Send email using nodemailer (email + rawPassword)
+        userService.sendCredentialsEmail(dto.getEmail(),rawPassword);
+
+        return ResponseEntity.ok("User created. Credentials sent via email.");
     }
+    @PostMapping("/register-admin")
+    public ResponseEntity<String> registerAdmin(@RequestBody RegisterUserDto dto) {
 
-    @PostMapping(
-            value = "/register"
+        // Check if admin already exists
 
-    )
-    public ResponseEntity<String> register(
-            @RequestBody OtpDto dto
 
-    ) throws Exception {
-        Optional<Otp> userotp = otpService.getUser(dto.getEmail());
+
+
         User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setMobileNumber(dto.getMobileNumber());
 
-        if(userotp.isEmpty()) throw new Exception("Otp not Generated");
-        boolean isValid = encoder.matches(dto.getOtp(), userotp.get().getOtp());
-        if(isValid) {
-            user.setName(userotp.get().getName());
-            user.setPassword(userotp.get().getPassword());
-            user.setEmail(userotp.get().getEmail());
-            user.setRole(userotp.get().getRole());
-            user.setIsActive(true);
+        // FORCE ROLE = ADMIN (ignore incoming role)
+        user.setRole(RoleEnum.ADMIN);
+        user.setIsActive(true);
 
+        // Use provided password (not random)
+        user.setPassword(encoder.encode(dto.getPassword()));
 
-           user.setImageUrl(userotp.get().getImageUrl()); 
-            userService.adduser(user);
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body("Correct");
-        }
-        else{
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body("Incorrect otp");
-        }
+        user.setIsFirstLogin(false);
+
+        userService.adduser(user);
+
+        return ResponseEntity.ok("Admin registered successfully");
     }
-
-
-
+    // =========================================================
+    // 2. LOGIN
+    // =========================================================
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(
-            @RequestBody LoginRequest request
-    ) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+
+        Optional<User> userOpt = userService.findByEmail(request.email());
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
+
+        User user = userOpt.get();
+
+        if (!user.getIsActive()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(null);
+        }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),
@@ -121,8 +116,7 @@ public class UserController {
                 )
         );
 
-        UserDetails userDetails =
-                (UserDetails) authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         String role = userDetails.getAuthorities()
                 .iterator()
@@ -131,13 +125,54 @@ public class UserController {
                 .replace("ROLE_", "");
 
         String token = jwt.generateToken(
-                userDetails.getUsername(), // email
+                userDetails.getUsername(),
                 role
         );
-        Optional<String> image = userService.getImageByEmail(request.email());
+
         return ResponseEntity.ok(
-                new AuthResponse(token,role,request.email(),image.get())
+                new AuthResponse(token, role, request.email(), null)
         );
     }
 
+    // =========================================================
+    // 3. UPDATE PASSWORD
+    // =========================================================
+    @PatchMapping("/user/update-password")
+    @PreAuthorize("hasAnyRole('STUDENT','TEACHER','ADMIN')")
+    public ResponseEntity<String> updatePassword(
+            @RequestParam String email,
+            @RequestParam String newPassword
+    ) {
+
+        Optional<User> userOpt = userService.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("User not found");
+        }
+
+        User user = userOpt.get();
+
+        // Encode new password
+        user.setPassword(encoder.encode(newPassword));
+
+        // Mark first login completed
+        user.setIsFirstLogin(false);
+
+        userService.adduser(user);
+
+        return ResponseEntity.ok("Password updated successfully");
+    }
+
+    // =========================================================
+    // 4. DELETE USER (ONLY ADMIN)
+    // =========================================================
+    @DeleteMapping("/admin/user/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+
+        userService.deleteUser(id);
+
+        return ResponseEntity.ok("User deleted successfully");
+    }
 }

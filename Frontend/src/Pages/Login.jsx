@@ -64,16 +64,7 @@ const Login = () => {
           {loading ? t('pages.login.button.loading') : t('pages.login.button.submit')}
         </button>
 
-        {/* 👇 Register link */}
-        <p className="text-center text-sm mt-4">
-          {t('pages.login.text.noAccount')}{" "}
-          <span
-            onClick={() => navigate("/register")}
-            className="text-orange-600 cursor-pointer hover:underline"
-          >
-            {t('pages.login.link.register')}
-          </span>
-        </p>
+        
       </form>
     </div>
   );

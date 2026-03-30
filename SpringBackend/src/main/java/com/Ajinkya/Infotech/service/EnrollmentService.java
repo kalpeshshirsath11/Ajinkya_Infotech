@@ -144,7 +144,7 @@ public class EnrollmentService {
                         .name(user.getName())
                         .email(user.getEmail())
                         .mobileNumber(user.getMobileNumber())
-                        .imageUrl(user.getImageUrl())
+
                         .isActive(user.getIsActive())
                         .build()
                 ).toList();
@@ -171,7 +171,6 @@ public class EnrollmentService {
                 .name(user.getName())
                 .email(user.getEmail())
                 .mobileNumber(user.getMobileNumber())
-                .imageUrl(user.getImageUrl())
                 .isActive(user.getIsActive())
                 .enrollments(enrollmentDTOs)
                 .build();

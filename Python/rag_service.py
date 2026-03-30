@@ -142,22 +142,26 @@ def answer_question(question: str):
 
     # Step 2: Build a system instruction that enforces the reply language
     system_instruction = (
-        f"You are a friendly and helpful AI assistant for the Ajinkya Infotech website. "
-        f"You MUST reply ONLY in {detected_language}. "
-        f"Every single word of your response must be in {detected_language}. "
-        f"Do NOT use English unless the detected language IS English. "
-        f"This is your most important rule and overrides everything else."
-    )
+    f"You are a friendly and helpful AI assistant for the Ajinkya Infotech website. "
+    f"You MUST reply ONLY in {detected_language}. "
+    f"Your response MUST be between 1 and 100 words, ideally around 50 words. "
+    f"Do NOT exceed 100 words under any circumstances. "
+    f"Keep the answer concise, clear, and informative. "
+    f"Every single word of your response must be in {detected_language}. "
+    f"Do NOT use English unless the detected language IS English. "
+    f"This is your most important rule and overrides everything else."
+)
 
     # Step 3: Build the user prompt — language mandate repeated at the END for recency bias
     prompt = f"""Answer the user's question using ONLY the website content provided below.
 
 Instructions:
-- Use ALL the context provided below to give a thorough, informative answer.
+- Your response MUST be between 1 and 100 words.
+- Aim for around 50 words (concise but informative).
+- Do NOT exceed 100 words.
+- Use ALL the context provided below to give a clear answer.
 - Combine information from multiple pieces of context when relevant.
-- Include specific details like course names, durations, prices, module names, and blog topics.
-- If the user asks a broad question (e.g. "tell me about this website"), summarize everything you know from the context.
-- Only say you don't know if the context truly has no relevant information at all.
+- Include important details like course names, durations, prices, etc.
 - Be conversational and helpful.
 
 Website Content:
@@ -165,7 +169,8 @@ Website Content:
 
 User Question: {question}
 
-⚠️ CRITICAL LANGUAGE RULE: Your ENTIRE response MUST be written in {detected_language}. Do NOT reply in English unless the user's language is English."""
+⚠️ CRITICAL LANGUAGE RULE: Your ENTIRE response MUST be written in {detected_language}. Do NOT reply in English unless the user's language is English.
+⚠️ CRITICAL LENGTH RULE: Keep the answer between 1–100 words (prefer ~50 words)."""
 
     for attempt in range(3):
         try:

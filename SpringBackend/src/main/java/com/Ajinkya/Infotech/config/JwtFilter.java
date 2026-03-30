@@ -25,11 +25,11 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private ApplicationContext context;
 
-    //  IMPORTANT: skip JWT filter for login & register
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return path.equals("/login") || path.equals("/register") || path.equals("/requestOtp");
+        return path.equals("/login") || path.equals("/register-admin");
     }
 
     @Override

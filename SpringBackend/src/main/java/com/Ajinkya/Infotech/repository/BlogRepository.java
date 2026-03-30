@@ -26,4 +26,5 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
 
     // Get all blogs (admin dashboard)
     List<Blog> findAllByOrderByCreatedAtDesc();
+    List<Blog> findByOwnerId(Long ownerId);
 }

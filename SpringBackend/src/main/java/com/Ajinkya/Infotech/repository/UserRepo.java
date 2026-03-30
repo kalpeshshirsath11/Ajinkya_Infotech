@@ -14,6 +14,5 @@ public interface UserRepo extends JpaRepository<User,Long> {
     Optional<String> findRoleByEmail(String email);
 
 
-    @Query("SELECT u.imageUrl FROM User u WHERE u.email = :email")
-    Optional<String> findImageByEmail(@Param("email") String email);
+
 }

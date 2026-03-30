@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import api from "../api/axios";
 import { toast } from "react-toastify";
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -8,17 +7,13 @@ import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
 
-const AddBlogPage = () => {
-  const navigate = useNavigate();
-
+const AddBlogModal = ({ isOpen, onClose, refresh }) => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [published, setPublished] = useState(true);
-
-  // NEW: mode toggle
-  const [mode, setMode] = useState("editor"); // "editor" | "html"
+  const [mode, setMode] = useState("editor");
   const [htmlInput, setHtmlInput] = useState("");
 
   const editor = useEditor({
@@ -26,10 +21,7 @@ const AddBlogPage = () => {
       StarterKit,
       Image,
       Link.configure({ openOnClick: true }),
-      Youtube.configure({
-        width: 640,
-        height: 360,
-      }),
+      Youtube.configure({ width: 640, height: 360 }),
     ],
     content: "",
     editorProps: {
@@ -39,6 +31,16 @@ const AddBlogPage = () => {
       },
     },
   });
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
+
+  if (!isOpen || !editor) return null;
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -51,7 +53,6 @@ const AddBlogPage = () => {
     setLoading(true);
 
     try {
-      // PICK CONTENT BASED ON MODE
       const content =
         mode === "editor" ? editor.getHTML() : htmlInput;
 
@@ -63,25 +64,39 @@ const AddBlogPage = () => {
       if (image) data.append("image", image);
 
       await api.post("/blogs", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       toast.success("Blog created successfully");
-      navigate("/admin/blogs");
-    } catch (err) {
+      onClose();
+      refresh();
+    } catch {
       toast.error("Failed to create blog");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!editor) return null;
-
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 flex justify-center">
-      <div className="w-full max-w-5xl bg-white shadow-xl rounded-2xl p-8">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-51 bg-black/50 backdrop-blur-sm 
+                 flex justify-center items-start pt-10 overflow-y-auto"
+    >
+
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-5xl bg-white shadow-xl rounded-2xl p-8 relative
+                   max-h-[90vh] overflow-y-auto"
+      >
+
+        {/* CLOSE BUTTON */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-5 text-xl font-bold text-gray-500 hover:text-red-500"
+        >
+          ✕
+        </button>
 
         {/* TITLE */}
         <input
@@ -117,23 +132,20 @@ const AddBlogPage = () => {
           </button>
         </div>
 
-        {/* ====== TIPTAP EDITOR MODE ====== */}
+        {/* EDITOR */}
         {mode === "editor" && (
           <>
-            {/* TOOLBAR */}
             <div className="sticky top-0 z-10 bg-white border rounded-xl p-3 mb-4 flex flex-wrap gap-2 shadow-sm">
               <ToolbarButton
                 active={editor.isActive("bold")}
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 label="Bold"
               />
-
               <ToolbarButton
                 active={editor.isActive("italic")}
                 onClick={() => editor.chain().focus().toggleItalic().run()}
                 label="Italic"
               />
-
               <ToolbarButton
                 active={editor.isActive("heading", { level: 1 })}
                 onClick={() =>
@@ -141,7 +153,6 @@ const AddBlogPage = () => {
                 }
                 label="H1"
               />
-
               <ToolbarButton
                 active={editor.isActive("heading", { level: 2 })}
                 onClick={() =>
@@ -149,31 +160,26 @@ const AddBlogPage = () => {
                 }
                 label="H2"
               />
-
               <ToolbarButton
                 active={editor.isActive("bulletList")}
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 label="• List"
               />
-
               <ToolbarButton
                 active={editor.isActive("orderedList")}
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
                 label="1. List"
               />
-
               <ToolbarButton
                 active={editor.isActive("blockquote")}
                 onClick={() => editor.chain().focus().toggleBlockquote().run()}
                 label="Quote"
               />
-
               <ToolbarButton
                 active={editor.isActive("codeBlock")}
                 onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                 label="Code"
               />
-
               <ToolbarButton
                 onClick={() => {
                   const url = prompt("Enter Image URL");
@@ -182,49 +188,38 @@ const AddBlogPage = () => {
                 }}
                 label="Image"
               />
-
               <ToolbarButton
                 onClick={() => {
                   const url = prompt("Enter URL");
                   if (url)
-                    editor
-                      .chain()
-                      .focus()
-                      .extendMarkRange("link")
-                      .setLink({ href: url })
-                      .run();
+                    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
                 }}
                 label="Link"
               />
-
               <ToolbarButton
                 onClick={() => {
                   const url = prompt("Enter YouTube URL");
-                  if (url)
-                    editor.commands.setYoutubeVideo({ src: url });
+                  if (url) editor.commands.setYoutubeVideo({ src: url });
                 }}
                 label="YouTube"
               />
-
               <ToolbarButton
                 onClick={() => editor.chain().focus().undo().run()}
                 label="Undo"
               />
-
               <ToolbarButton
                 onClick={() => editor.chain().focus().redo().run()}
                 label="Redo"
               />
             </div>
 
-            {/* EDITOR */}
             <div className="border rounded-xl bg-white">
               <EditorContent editor={editor} />
             </div>
           </>
         )}
 
-        {/* ====== HTML MODE ====== */}
+        {/* HTML MODE */}
         {mode === "html" && (
           <textarea
             value={htmlInput}
@@ -234,7 +229,7 @@ const AddBlogPage = () => {
           />
         )}
 
-        {/* COVER IMAGE */}
+        {/* IMAGE */}
         <div className="mt-6">
           <label className="font-semibold">Cover Image</label>
           <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -248,7 +243,7 @@ const AddBlogPage = () => {
           )}
         </div>
 
-        {/* PUBLISH */}
+        {/* FOOTER */}
         <div className="mt-6 flex items-center justify-between">
           <label className="flex items-center gap-2">
             <input
@@ -283,4 +278,4 @@ const ToolbarButton = ({ active, onClick, label }) => (
   </button>
 );
 
-export default AddBlogPage;
+export default AddBlogModal;

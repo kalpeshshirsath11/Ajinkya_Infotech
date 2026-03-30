@@ -40,11 +40,10 @@ public class User {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    //  Cloudinary image URL
-    @Column(name = "image_url", length = 500)
-    private String imageUrl;
 
-    // Mobile number
+
+    @Column(name = "is_first_login")
+    private Boolean isFirstLogin = true;
     @Column(name = "mobile_number", length = 15, unique = true)
     private String mobileNumber;
 

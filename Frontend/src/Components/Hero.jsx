@@ -10,21 +10,21 @@ function Hero() {
   const [slides, setSlides] = useState([]);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [role, setRole] = useState(null);
 
-  //  Check admin from localStorage safely
+  //  Get user role
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
-      if (user?.role === "ADMIN") {
-        setIsAdmin(true);
+      if (user?.role) {
+        setRole(user.role);
       }
-    } catch (e) {
-      setIsAdmin(false);
+    } catch {
+      setRole(null);
     }
   }, []);
 
-  //  Fallback images (your updated ones)
+  //  Fallback slides
   const fallbackSlides = [
     {
       title: t("hero.slide1.title"),
@@ -46,7 +46,7 @@ function Hero() {
     },
   ];
 
-  //  Fetch slides from backend
+  //  Fetch slides
   const fetchSlides = async () => {
     try {
       const res = await api.get("/api/hero/active");
@@ -78,7 +78,7 @@ function Hero() {
     fetchSlides();
   }, []);
 
-  // ✅ Auto slide
+  //  Auto slide
   useEffect(() => {
     if (slides.length === 0) return;
 
@@ -89,7 +89,6 @@ function Hero() {
     return () => clearInterval(interval);
   }, [slides]);
 
-  // ✅ Loading state
   if (loading) {
     return (
       <div className="h-[600px] flex items-center justify-center">
@@ -98,82 +97,125 @@ function Hero() {
     );
   }
 
+  //  Role-based button
+  const getButton = () => {
+    if (role === "ADMIN") {
+      return {
+        text: "Admin Dashboard",
+        action: () => navigate("/admindashboard"),
+      };
+    }
+    if (role === "STUDENT") {
+      return {
+        text: "Check Courses",
+        action: () => navigate("/checkcourses"),
+      };
+    }
+    if (role === "TEACHER") {
+      return {
+        text: "My Blogs",
+        action: () => navigate("/myblogs"),
+      };
+    }
+    return null;
+  };
+
+  const button = getButton();
+
   return (
     <div className="relative w-full h-[600px] overflow-hidden">
-      
-      {/* SLIDES */}
-      {slides.map((slide, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 transition-opacity duration-700 ${
-            index === current ? "opacity-100 z-20" : "opacity-0 z-0"
-          }`}
-          style={{
-            backgroundImage: `url(${slide.image})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-      ))}
 
-      {/* OVERLAY */}
-      <div className="absolute inset-0 bg-black/40 z-30"></div>
+      {/*  LOGGED IN → CLEAN UI */}
+      {role ? (
+        <div className="flex flex-col items-center justify-center h-full 
+                        bg-gradient-to-r from-orange-100 to-amber-100 text-center px-4">
 
-      {/* CONTENT */}
-      <div className="relative z-40 flex h-full items-center justify-center text-center px-4">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {slides[current]?.title}
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            Welcome back 👋
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-200 mb-6">
-            {slides[current]?.desc}
+          <p className="text-lg md:text-xl text-gray-600 mb-6">
+            Continue your journey with Ajinkya Infotech
           </p>
 
-          {/* 🔥 Admin Button (Only for ADMIN) */}
-          {isAdmin && (
+          {button && (
             <button
-              onClick={() => navigate("/admindashboard")}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-lg transition duration-300"
+              onClick={button.action}
+              className="bg-orange-500 hover:bg-orange-600 text-white 
+                         px-6 py-3 rounded-full text-lg font-semibold 
+                         shadow-md transition hover:scale-105"
             >
-              Admin Dashboard
+              {button.text}
             </button>
           )}
         </div>
-      </div>
+      ) : (
+        <>
+          {/*  SLIDER (ONLY FOR GUEST) */}
+          {slides.map((slide, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-700 ${
+                index === current ? "opacity-100 z-20" : "opacity-0 z-0"
+              }`}
+              style={{
+                backgroundImage: `url(${slide.image})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          ))}
 
-      {/* LEFT BUTTON */}
-      <button
-        onClick={() =>
-          setCurrent((prev) => (prev - 1 + slides.length) % slides.length)
-        }
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-black/40 px-3 py-2 rounded-full text-white hover:bg-black/60"
-      >
-        ‹
-      </button>
+          {/* OVERLAY */}
+          <div className="absolute inset-0 bg-black/40 z-30"></div>
 
-      {/* RIGHT BUTTON */}
-      <button
-        onClick={() =>
-          setCurrent((prev) => (prev + 1) % slides.length)
-        }
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-black/40 px-3 py-2 rounded-full text-white hover:bg-black/60"
-      >
-        ›
-      </button>
+          {/* CONTENT */}
+          <div className="relative z-40 flex h-full items-center justify-center text-center px-4">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                {slides[current]?.title}
+              </h1>
 
-      {/* DOT INDICATORS */}
-      <div className="absolute bottom-4 w-full flex justify-center gap-2 z-50">
-        {slides.map((_, i) => (
-          <div
-            key={i}
-            onClick={() => setCurrent(i)}
-            className={`h-2 w-2 rounded-full cursor-pointer ${
-              i === current ? "bg-orange-500" : "bg-white/60"
-            }`}
-          />
-        ))}
-      </div>
+              <p className="text-lg md:text-xl text-gray-200 mb-6">
+                {slides[current]?.desc}
+              </p>
+            </div>
+          </div>
+
+          {/* LEFT BUTTON */}
+          <button
+            onClick={() =>
+              setCurrent((prev) => (prev - 1 + slides.length) % slides.length)
+            }
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-black/40 px-3 py-2 rounded-full text-white hover:bg-black/60"
+          >
+            ‹
+          </button>
+
+          {/* RIGHT BUTTON */}
+          <button
+            onClick={() =>
+              setCurrent((prev) => (prev + 1) % slides.length)
+            }
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-black/40 px-3 py-2 rounded-full text-white hover:bg-black/60"
+          >
+            ›
+          </button>
+
+          {/* DOTS */}
+          <div className="absolute bottom-4 w-full flex justify-center gap-2 z-50">
+            {slides.map((_, i) => (
+              <div
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`h-2 w-2 rounded-full cursor-pointer ${
+                  i === current ? "bg-orange-500" : "bg-white/60"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

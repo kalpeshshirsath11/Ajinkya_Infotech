@@ -25,7 +25,7 @@ const AdminBlogsPage = () => {
     if (!window.confirm("Delete this blog?")) return;
 
     try {
-      await api.delete(`/api/admin/blogs/${id}`);
+      await api.delete(`/blogs/${id}`);
       toast.success("Blog deleted");
       fetchBlogs();
     } catch (err) {

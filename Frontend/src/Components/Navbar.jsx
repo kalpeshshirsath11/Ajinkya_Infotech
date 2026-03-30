@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/image.png";
 import { useTranslation } from "react-i18next";
-import { FaBookOpen, FaBlog } from "react-icons/fa";
+import { FaBookOpen, FaBlog, FaSignOutAlt } from "react-icons/fa";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -12,20 +12,8 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const { t, i18n } = useTranslation();
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -37,7 +25,7 @@ const Navbar = () => {
   return (
     <nav className="bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400
                     bg-[length:200%_200%] animate-gradient
-                    shadow-lg px-6 py-3 fixed top-0 left-0 w-full z-50">
+                    shadow-lg px-6 py-3 fixed top-0 left-0 w-full z-51">
 
       <div className="flex items-center justify-between">
 
@@ -53,50 +41,31 @@ const Navbar = () => {
           />
         </div>
 
-        {/* 🔥 PREMIUM MENU */}
+        {/* MENU */}
         <div className="hidden md:flex items-center gap-10 text-lg font-semibold">
 
-          {/* Courses */}
           <div
             onClick={() => navigate("/courses")}
             className="flex items-center gap-2 cursor-pointer
                        text-gray-900 transition duration-300
-                       hover:text-orange-600 hover:scale-105
-                       relative group"
+                       hover:text-orange-600 hover:scale-105"
           >
-            <FaBookOpen className="text-orange-500 group-hover:drop-shadow-[0_0_8px_rgba(255,115,0,0.8)] transition" />
-
-            <span className="font-bold tracking-wide">
-              {t("courses")}
-            </span>
-
-            <span className="absolute -bottom-1 left-0 w-0 h-[3px] bg-orange-500 
-                             transition-all duration-300 group-hover:w-full
-                             shadow-[0_0_10px_rgba(255,115,0,0.7)]"></span>
+            <FaBookOpen className="text-orange-500" />
+            {t("courses")}
           </div>
 
-          {/* Blogs */}
           <div
             onClick={() => navigate("/blogs")}
             className="flex items-center gap-2 cursor-pointer
                        text-gray-900 transition duration-300
-                       hover:text-orange-600 hover:scale-105
-                       relative group"
+                       hover:text-orange-600 hover:scale-105"
           >
-            <FaBlog className="text-orange-500 group-hover:drop-shadow-[0_0_8px_rgba(255,115,0,0.8)] transition" />
-
-            <span className="font-bold tracking-wide">
-              {t("blogs")}
-            </span>
-
-            <span className="absolute -bottom-1 left-0 w-0 h-[3px] bg-orange-500 
-                             transition-all duration-300 group-hover:w-full
-                             shadow-[0_0_10px_rgba(255,115,0,0.7)]"></span>
+            <FaBlog className="text-orange-500" />
+            {t("blogs")}
           </div>
-
         </div>
 
-        {/* 🔥 RIGHT SIDE */}
+        {/* RIGHT SIDE */}
         <div className="hidden md:flex items-center gap-4">
 
           {/* Language */}
@@ -110,7 +79,7 @@ const Navbar = () => {
           </button>
 
           {/* Auth */}
-          {!token && (
+          {!token ? (
             <div
               onClick={() => navigate("/login")}
               className="bg-orange-600 text-white px-5 py-2 rounded-full
@@ -118,44 +87,18 @@ const Navbar = () => {
             >
               {t("login")}
             </div>
-          )}
-
-          {token && (
-            <div className="relative" ref={profileRef}>
-              <div
-                onClick={() => setOpen(!open)}
-                className="w-10 h-10 rounded-full bg-orange-600 overflow-hidden
-                           cursor-pointer ring-2 ring-white shadow"
-              >
-                <img
-                  src={user.Image}
-                  alt="User"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {open && (
-                <div className="absolute right-0 mt-3 w-44 bg-white shadow-xl
-                                rounded-lg border overflow-hidden">
-                  <div
-                    onClick={() => {
-                      navigate("/profile");
-                      setOpen(false);
-                    }}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
-                  >
-                    {t("profile")}
-                  </div>
-                  <div
-                    onClick={handleLogout}
-                    className="px-4 py-2 hover:bg-red-50 text-red-600
-                               cursor-pointer transition"
-                  >
-                    {t("logout")}
-                  </div>
-                </div>
-              )}
-            </div>
+          ) : (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-5 py-2 rounded-full
+                         bg-gradient-to-r from-red-500 to-red-600
+                         text-white font-semibold shadow-md
+                         hover:from-red-600 hover:to-red-700
+                         hover:scale-105 transition duration-200"
+            >
+              <FaSignOutAlt />
+              {t("logout")}
+            </button>
           )}
         </div>
 
@@ -202,14 +145,15 @@ const Navbar = () => {
               {t("login")}
             </div>
           ) : (
-            <>
-              <div onClick={() => navigate("/profile")} className="cursor-pointer">
-                {t("profile")}
-              </div>
-              <div onClick={handleLogout} className="text-red-600 cursor-pointer">
-                {t("logout")}
-              </div>
-            </>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg
+                         bg-red-500 text-white
+                         hover:bg-red-600 transition"
+            >
+              <FaSignOutAlt />
+              {t("logout")}
+            </button>
           )}
         </div>
       )}

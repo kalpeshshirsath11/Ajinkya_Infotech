@@ -4,11 +4,12 @@ import com.Ajinkya.Infotech.model.Blog;
 import com.Ajinkya.Infotech.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -17,10 +18,6 @@ public class BlogController {
 
     @Autowired
     private BlogService blogService;
-
-    @Autowired
-    //private CloudinaryService cloudinaryService;
-    // ================= PUBLIC =================
 
     @GetMapping
     public List<Blog> getAllPublishedBlogs() {
@@ -32,21 +29,59 @@ public class BlogController {
         return ResponseEntity.ok(blogService.getBlogBySlug(slug));
     }
 
+    @PostMapping(consumes = "multipart/form-data")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    public ResponseEntity<?> createBlog(
+            @RequestParam String title,
+            @RequestParam String content,
+            @RequestParam boolean published,
+            @RequestPart(required = false) MultipartFile image,
+            Authentication authentication
+    ) throws IOException {
 
-//    @GetMapping("/{id}/image")
-//    public ResponseEntity<byte[]> getBlogImage(@PathVariable Long id) {
-//
-//        Blog blog = blogService.getBlogById(id);
-//
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.parseMediaType(blog.getImageType()))
-//                .body(blog.getCoverImage());
-//    }
+        String email = authentication.getName();
 
-    // ================= ADMIN =================
+        return ResponseEntity.ok(
+                blogService.createBlog(title, content, image, published, email)
+        );
+    }
 
 
 
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    public ResponseEntity<?> updateBlog(
+            @PathVariable Long id,
+            @RequestParam String title,
+            @RequestParam String content,
+            @RequestParam boolean published,
+            @RequestPart(required = false) MultipartFile image,
+            Authentication authentication
+    ) throws IOException {
 
+        String email = authentication.getName();
 
+        return ResponseEntity.ok(
+                blogService.updateBlogByOwner(id, title, content, image, published, email)
+        );
+    }
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    public ResponseEntity<?> deleteBlog(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+
+        String email = authentication.getName();
+
+        blogService.deleteBlogByOwner(id, email);
+
+        return ResponseEntity.ok("Deleted");
+    }
+    @GetMapping("/my")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    public ResponseEntity<List<Blog>> getMyBlogs(Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(blogService.getBlogsByUser(email));
+    }
 }
