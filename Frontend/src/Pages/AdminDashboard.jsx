@@ -51,6 +51,11 @@ const AdminDashboard = () => {
             title="Hero Section"
             onClick={() => navigate("/admin/hero")}
           />
+          <Card
+            icon={<FaImages />}
+            title="ADD STUDENT"
+            onClick={() => navigate("/admin/register")}
+          />
         </div>
       </div>
     </div>

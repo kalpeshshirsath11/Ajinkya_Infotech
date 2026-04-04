@@ -20,6 +20,7 @@ import UpdateBlogPage from "./Pages/UpdateBlogPage";
 import ChatBotModal from "./Components/ChatBotModal";
 import HeroAdmin from "./Pages/HeroAdmin";
 import TeacherBlogs from "./Pages/TeacherBlogs";
+import RegisterUser from "./Pages/RegisterUser";
 
 
 
@@ -57,6 +58,7 @@ function App() {
       <Route path="/myblogs" element={<TeacherBlogs/>}/>
       
       <Route path="/admin/hero" element={<HeroAdmin />} />
+      <Route path="/admin/register" element={<RegisterUser/>}/>
     </Routes>
   </div>
 </main>
