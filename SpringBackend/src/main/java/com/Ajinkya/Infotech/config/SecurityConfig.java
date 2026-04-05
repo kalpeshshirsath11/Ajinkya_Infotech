@@ -63,10 +63,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/health","/api/login", "/api/register-admin").permitAll()
+                        .requestMatchers("/api/login", "/api/register-admin").permitAll()
 
                         //  allow public hero data
-                        .requestMatchers(HttpMethod.GET, "/api/hero/active").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/hero/active","/health").permitAll()
 
                         //  blogs & courses already ok
                         .requestMatchers(HttpMethod.GET, "/blogs", "/blogs/**").permitAll()
