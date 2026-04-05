@@ -1,13 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "./AuthContext";
+import api from "../api/axios";
 
 const BlogsContext = createContext(null);
 
 // optional: central axios instance
-const api = axios.create({
-  baseURL: "https://ajinkya-infotech-1.onrender.com/",
-});
 
 export const BlogsProvider = ({ children }) => {
   const { token } = useAuth();

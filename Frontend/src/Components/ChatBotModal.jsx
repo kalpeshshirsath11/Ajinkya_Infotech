@@ -1,17 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
 
 const ChatBotModal = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  
   const modalRef = useRef(null);
   const chatRef = useRef(null);
 
-  const token = localStorage.getItem("token");
-
+  const str = `${import.meta.env.VITE_PYTHON_API_URL}/chat`;
   // Close when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -33,43 +31,57 @@ const ChatBotModal = () => {
     };
   }, [open]);
 
-  // Auto scroll to bottom
+  // Auto scroll
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
-  }, [messages, loading]);
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!message.trim() || loading) return;
 
-    const updatedMessages = [...messages, { sender: "user", text: message }];
+    const userMsg = { sender: "user", text: message };
+    const updatedMessages = [...messages, userMsg];
+
     setMessages(updatedMessages);
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/chat",
-        { question: message },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      console.time("API Call");
+
+      const response = await fetch(str, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ question: message }),
+      });
+
+      console.timeEnd("API Call");
+
+      if (!response.ok) {
+        throw new Error("Server error");
+      }
+
+      const data = await response.json();
 
       setMessages([
         ...updatedMessages,
         {
           sender: "bot",
-          text: res.data.answer || "No response",
+          text: data.answer || "No response",
         },
       ]);
     } catch (err) {
+      console.error(err);
+
       setMessages([
         ...updatedMessages,
-        { sender: "bot", text: "Server error. Please try again." },
+        {
+          sender: "bot",
+          text: "Server error. Please try again.",
+        },
       ]);
     }
 

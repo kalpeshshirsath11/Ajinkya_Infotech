@@ -6,7 +6,7 @@ const RegisterUser = () => {
     name: "",
     email: "",
     mobileNumber: "",
-    Role: "USER", // capital R
+    Role: "STUDENT", 
   });
 
   const [loading, setLoading] = useState(false);
@@ -47,7 +47,7 @@ const RegisterUser = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/admin/register", formData);
+      const res = await api.post("/api/admin/register", formData);
       setMessage(res.data);
 
       // Reset form
@@ -55,7 +55,7 @@ const RegisterUser = () => {
         name: "",
         email: "",
         mobileNumber: "",
-        Role: "USER",
+        Role: "STUDENT",
       });
     } catch (err) {
       setError(
@@ -105,8 +105,8 @@ const RegisterUser = () => {
             onChange={handleChange}
             style={styles.input}
           >
-            <option value="USER">USER</option>
-            <option value="ADMIN">ADMIN</option>
+            <option value="STUDENT">STUDENT</option>
+            <option value="TEACHER">TEACHER</option>
           </select>
 
           <button type="submit" disabled={loading} style={styles.button}>

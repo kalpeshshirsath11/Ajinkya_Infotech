@@ -47,6 +47,7 @@ def ingest_endpoint(request: IngestRequest):
 @app.post("/chat")
 def chat_endpoint(request: ChatRequest):
     try:
+        print("API HIT")
         answer = answer_question(request.question)
         return {"answer": answer}
     except Exception as e:

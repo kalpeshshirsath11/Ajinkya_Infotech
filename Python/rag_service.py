@@ -6,29 +6,52 @@ import psycopg
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-# Load environment variables first
+
+# Load .env ONLY for local development
 load_dotenv()
 
+# ---------- ENV VALIDATION ----------
 
+def get_env_variable(name: str) -> str:
+    value = os.environ.get(name)
+    if not value:
+        raise ValueError(f"❌ Missing environment variable: {name}")
+    return value
+
+
+# ---------- GEMINI CLIENT ----------
+
+def get_gemini_client():
+    api_key = get_env_variable("GEMINI_API_KEY")
+    return genai.Client(api_key=api_key)
+
+
+# ---------- DATABASE CONNECTION ----------
+
+def get_connection_string():
+    return (
+        f"postgresql+psycopg://"
+        f"{get_env_variable('DB_USER')}:"
+        f"{get_env_variable('DB_PASSWORD')}@"
+        f"{get_env_variable('DB_HOST')}:"
+        f"{get_env_variable('DB_PORT')}/"
+        f"{get_env_variable('DB_NAME')}"
+    )
+
+
+# ---------- LANGCHAIN IMPORTS ----------
 from langchain_postgres import PGVector
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
-# 1. Setup Gemini Client
-# We use 'gemini-embedding-001' for vectors (768 dims via output_dimensionality)
-# We use 'gemini-2.5-flash-lite' for chat (fast & has free tier quota)
-
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY"),
-)
 
 
-# 2. Connect to the Vector DB
-# This string must match your .env credentials
-connection = f"postgresql+psycopg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+# ---------- EMBEDDINGS ----------
 
 class GeminiEmbeddings(Embeddings):
     def embed_documents(self, texts):
+        client = get_gemini_client()
         vectors = []
+
         for text in texts:
             response = client.models.embed_content(
                 model="gemini-embedding-001",
@@ -36,58 +59,56 @@ class GeminiEmbeddings(Embeddings):
                 config=types.EmbedContentConfig(output_dimensionality=768),
             )
             vectors.append(response.embeddings[0].values)
+
         return vectors
 
     def embed_query(self, text):
+        client = get_gemini_client()
+
         response = client.models.embed_content(
             model="gemini-embedding-001",
             contents=text,
             config=types.EmbedContentConfig(output_dimensionality=768),
         )
+
         return response.embeddings[0].values
-
-# ---------- EMBEDDING FUNCTION ----------
-
-# def embed_text(text: str):
-#     response = client.models.embed_content(
-#         model="text-embedding-004",
-#         contents=text,
-#     )
-#     return response.embeddings[0].values
 
 
 # ---------- VECTOR STORE ----------
 
 def get_vector_store():
     return PGVector(
-        embeddings=GeminiEmbeddings(),   # <-- IMPORTANT
+        embeddings=GeminiEmbeddings(),
         collection_name="vector_store",
-        connection=connection,
+        connection=get_connection_string(),
         embedding_length=768,
         use_jsonb=True,
     )
 
 
-
-# ---------- INGEST TEXT ----------
+# ---------- DELETE OLD DOCS ----------
 
 def _delete_by_source_id(source_id: str):
-    """Remove old embeddings for a source before re-ingesting."""
-    raw_conn = connection.replace("postgresql+psycopg://", "postgresql://")
+    raw_conn = get_connection_string().replace("postgresql+psycopg://", "postgresql://")
+
     try:
         with psycopg.connect(raw_conn) as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     "DELETE FROM langchain_pg_embedding WHERE cmetadata->>'source_id' = %s",
-                    (source_id,)
+                    (source_id,),
                 )
                 deleted = cur.rowcount
                 conn.commit()
+
                 if deleted > 0:
                     print(f"🗑️ Deleted {deleted} old doc(s) for {source_id}")
+
     except Exception as e:
         print(f"⚠️ Could not delete old docs for {source_id}: {e}")
 
+
+# ---------- INGEST ----------
 
 def ingest_text(text: str, source_id: str):
     _delete_by_source_id(source_id)
@@ -96,24 +117,27 @@ def ingest_text(text: str, source_id: str):
 
     doc = Document(
         page_content=text,
-        metadata={"source_id": source_id}
+        metadata={"source_id": source_id},
     )
 
     store.add_documents([doc])
 
-    print(f"Indexed document: {source_id}")
+    print(f"✅ Indexed document: {source_id}")
 
 
+# ---------- LANGUAGE DETECTION ----------
 
 def _detect_language(question: str) -> str:
-    """Use a quick Gemini call to detect the language of the user's question."""
+    client = get_gemini_client()
+
     detection_prompt = (
         "Detect the language of the following text. "
-        "If it is written in Romanized Hindi (Hindi in English letters), reply 'Hindi'. "
-        "If it is written in Romanized Marathi (Marathi in English letters), reply 'Marathi'. "
-        "Reply with ONLY the language name, nothing else.\n\n"
+        "If Romanized Hindi → reply 'Hindi'. "
+        "If Romanized Marathi → reply 'Marathi'. "
+        "Reply ONLY with language name.\n\n"
         f"Text: {question}"
     )
+
     try:
         resp = client.models.generate_content(
             model="gemini-2.5-flash-lite",
@@ -122,13 +146,17 @@ def _detect_language(question: str) -> str:
         detected = resp.text.strip()
         print(f"🌐 Detected language: {detected}")
         return detected
+
     except Exception as e:
-        print(f"⚠️ Language detection failed, defaulting to English: {e}")
+        print(f"⚠️ Language detection failed: {e}")
         return "English"
 
 
+# ---------- CHAT ----------
+
 def answer_question(question: str):
     store = get_vector_store()
+    client = get_gemini_client()
 
     docs = store.similarity_search(question, k=5)
 
@@ -137,40 +165,25 @@ def answer_question(question: str):
     if not context.strip():
         return "I couldn't find any relevant information."
 
-    # Step 1: Detect the language of the user's question
     detected_language = _detect_language(question)
 
-    # Step 2: Build a system instruction that enforces the reply language
     system_instruction = (
-    f"You are a friendly and helpful AI assistant for the Ajinkya Infotech website. "
-    f"You MUST reply ONLY in {detected_language}. "
-    f"Your response MUST be between 1 and 100 words, ideally around 50 words. "
-    f"Do NOT exceed 100 words under any circumstances. "
-    f"Keep the answer concise, clear, and informative. "
-    f"Every single word of your response must be in {detected_language}. "
-    f"Do NOT use English unless the detected language IS English. "
-    f"This is your most important rule and overrides everything else."
-)
+        f"You are a helpful AI assistant. "
+        f"You MUST reply ONLY in {detected_language}. "
+        f"Response must be 1–100 words (ideal ~50)."
+    )
 
-    # Step 3: Build the user prompt — language mandate repeated at the END for recency bias
-    prompt = f"""Answer the user's question using ONLY the website content provided below.
+    prompt = f"""
+Answer using ONLY the content below.
 
-Instructions:
-- Your response MUST be between 1 and 100 words.
-- Aim for around 50 words (concise but informative).
-- Do NOT exceed 100 words.
-- Use ALL the context provided below to give a clear answer.
-- Combine information from multiple pieces of context when relevant.
-- Include important details like course names, durations, prices, etc.
-- Be conversational and helpful.
-
-Website Content:
+Content:
 {context}
 
-User Question: {question}
+Question: {question}
 
-⚠️ CRITICAL LANGUAGE RULE: Your ENTIRE response MUST be written in {detected_language}. Do NOT reply in English unless the user's language is English.
-⚠️ CRITICAL LENGTH RULE: Keep the answer between 1–100 words (prefer ~50 words)."""
+⚠️ Reply ONLY in {detected_language}
+⚠️ Max 100 words
+"""
 
     for attempt in range(3):
         try:
@@ -181,11 +194,13 @@ User Question: {question}
                     system_instruction=system_instruction,
                 ),
             )
+
             return response.text
+
         except Exception as e:
             if "429" in str(e) and attempt < 2:
                 wait = (attempt + 1) * 15
-                print(f"⏳ Rate limited, retrying in {wait}s (attempt {attempt + 1}/3)")
+                print(f"⏳ Retry in {wait}s...")
                 time.sleep(wait)
             else:
                 raise e
