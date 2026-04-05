@@ -33,15 +33,18 @@ public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
+
     public SecurityConfig(MyUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
+    // 🔐 Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 
+    // 🔐 Authentication provider
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider =
@@ -50,6 +53,7 @@ public class SecurityConfig {
         return provider;
     }
 
+    // 🔐 Auth manager
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config
@@ -57,44 +61,64 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    // 🔥 MAIN SECURITY CONFIG
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(auth -> auth
+
+                        // 🔓 Public APIs
                         .requestMatchers("/api/login", "/api/register-admin").permitAll()
 
-                        //  allow public hero data
-                        .requestMatchers(HttpMethod.GET, "/api/hero/active","/health").permitAll()
+                        // 🔓 Health endpoint (IMPORTANT for UptimeRobot)
+                        .requestMatchers("/health").permitAll()
 
-                        //  blogs & courses already ok
+                        // 🔓 Public GET APIs
+                        .requestMatchers(HttpMethod.GET, "/api/hero/active").permitAll()
                         .requestMatchers(HttpMethod.GET, "/blogs", "/blogs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/courses", "/api/courses/**").permitAll()
 
-                        //  protect admin APIs
+                        // 🔒 Admin APIs
                         .requestMatchers("/api/hero/**").hasRole("ADMIN")
 
+                        // 🔒 Everything else protected
                         .anyRequest().authenticated()
                 )
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+
                 .addFilterBefore(jwtFilter,
                         UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
 
+    // 🌐 CORS CONFIG
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173","https://ajinkya-infotech.vercel.app"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"));
+
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://ajinkya-infotech.vercel.app"
+        ));
+
+        config.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"
+        ));
+
         config.setAllowedHeaders(List.of("*"));
+
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
+
         source.registerCorsConfiguration("/**", config);
 
         return source;

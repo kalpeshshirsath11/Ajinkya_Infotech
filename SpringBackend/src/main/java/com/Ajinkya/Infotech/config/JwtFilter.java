@@ -26,10 +26,14 @@ public class JwtFilter extends OncePerRequestFilter {
     private ApplicationContext context;
 
 
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
-        return path.equals("/login") || path.equals("/register-admin") || path.equals("/health");
+
+        return path.equals("/api/login")
+                || path.equals("/api/register-admin")
+                || path.equals("/health");
     }
 
     @Override
