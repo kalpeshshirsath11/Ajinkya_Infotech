@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/register-admin").permitAll()
+                        .requestMatchers("/health","/api/login", "/api/register-admin").permitAll()
 
                         //  allow public hero data
                         .requestMatchers(HttpMethod.GET, "/api/hero/active").permitAll()
