@@ -105,7 +105,8 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://ajinkya-infotech.vercel.app"
+                "https://ajinkya-infotech.vercel.app",
+                "https://ajinkyainfotech.co.in"
         ));
 
         config.setAllowedMethods(List.of(
