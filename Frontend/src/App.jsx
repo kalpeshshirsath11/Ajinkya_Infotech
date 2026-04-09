@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useRef } from "react";
+import { use, useRef } from "react";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./Pages/Home";
@@ -21,11 +21,20 @@ import ChatBotModal from "./Components/ChatBotModal";
 import HeroAdmin from "./Pages/HeroAdmin";
 import TeacherBlogs from "./Pages/TeacherBlogs";
 import RegisterUser from "./Pages/RegisterUser";
+import CourseStudent from "./Pages/CourseStudent";
+
+
+
+
+
 
 
 
 
 function App() {
+  
+     
+
   
 
   return (
@@ -56,7 +65,7 @@ function App() {
       <Route path="/admin/blogs/add" element={<AddBlogPage />} />
       <Route path="/admin/blogs/edit/:id" element={<UpdateBlogPage />} />
       <Route path="/myblogs" element={<TeacherBlogs/>}/>
-      
+      <Route path="/checkcourses" element={<CourseStudent />} />
       <Route path="/admin/hero" element={<HeroAdmin />} />
       <Route path="/admin/register" element={<RegisterUser/>}/>
     </Routes>
