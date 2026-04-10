@@ -1,4 +1,5 @@
-# This file handles the "Brain" work: talking to Gemini and searching the database.
+# This file handles the "Brain" work: talking to Groq LLM and searching the database.
+# Gemini is still used for embeddings (Groq has no embedding API).
 
 import os
 import time
@@ -6,6 +7,7 @@ import psycopg
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from groq import Groq
 
 # Load .env ONLY for local development
 load_dotenv()
@@ -19,11 +21,18 @@ def get_env_variable(name: str) -> str:
     return value
 
 
-# ---------- GEMINI CLIENT ----------
+# ---------- GEMINI CLIENT (embeddings only) ----------
 
 def get_gemini_client():
     api_key = get_env_variable("GEMINI_API_KEY")
     return genai.Client(api_key=api_key)
+
+
+# ---------- GROQ CLIENT (LLM generation) ----------
+
+def get_groq_client():
+    api_key = get_env_variable("GROQ_API_KEY")
+    return Groq(api_key=api_key)
 
 
 # ---------- DATABASE CONNECTION ----------
@@ -128,7 +137,7 @@ def ingest_text(text: str, source_id: str):
 # ---------- LANGUAGE DETECTION ----------
 
 def _detect_language(question: str) -> str:
-    client = get_gemini_client()
+    client = get_groq_client()
 
     detection_prompt = (
         "Detect the language of the following text. "
@@ -139,11 +148,12 @@ def _detect_language(question: str) -> str:
     )
 
     try:
-        resp = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
-            contents=detection_prompt,
+        resp = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": detection_prompt}],
+            max_tokens=10,
         )
-        detected = resp.text.strip()
+        detected = resp.choices[0].message.content.strip()
         print(f"🌐 Detected language: {detected}")
         return detected
 
@@ -156,7 +166,7 @@ def _detect_language(question: str) -> str:
 
 def answer_question(question: str):
     store = get_vector_store()
-    client = get_gemini_client()
+    client = get_groq_client()
 
     docs = store.similarity_search(question, k=5)
 
@@ -187,15 +197,16 @@ Question: {question}
 
     for attempt in range(3):
         try:
-            response = client.models.generate_content(
-                model="gemini-2.5-flash-lite",
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_instruction,
-                ),
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt},
+                ],
+                max_tokens=300,
             )
 
-            return response.text
+            return response.choices[0].message.content
 
         except Exception as e:
             if "429" in str(e) and attempt < 2:
