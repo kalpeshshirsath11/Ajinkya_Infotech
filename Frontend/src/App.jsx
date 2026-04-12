@@ -22,6 +22,7 @@ import HeroAdmin from "./Pages/HeroAdmin";
 import TeacherBlogs from "./Pages/TeacherBlogs";
 import RegisterUser from "./Pages/RegisterUser";
 import CourseStudent from "./Pages/CourseStudent";
+import AdminAchievements from "./Pages/AdminAchievements";
 
 
 
@@ -68,6 +69,7 @@ function App() {
       <Route path="/checkcourses" element={<CourseStudent />} />
       <Route path="/admin/hero" element={<HeroAdmin />} />
       <Route path="/admin/register" element={<RegisterUser/>}/>
+      <Route path="/admin/achievment" element={<AdminAchievements/>}/>
     </Routes>
   </div>
 </main>

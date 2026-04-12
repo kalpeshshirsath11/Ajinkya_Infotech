@@ -33,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         return path.equals("/api/login")
                 || path.equals("/api/register-admin")
-                || path.equals("/health");
+                || path.equals("/health") || path.equals("/api/admin/achievements/{id}");
     }
 
     @Override

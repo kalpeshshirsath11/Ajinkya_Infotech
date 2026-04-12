@@ -38,13 +38,13 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    // 🔐 Password encoder
+    //  Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 
-    // 🔐 Authentication provider
+    //  Authentication provider
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider =
@@ -53,7 +53,7 @@ public class SecurityConfig {
         return provider;
     }
 
-    // 🔐 Auth manager
+    //  Auth manager
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config
@@ -61,7 +61,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // 🔥 MAIN SECURITY CONFIG
+    //  MAIN SECURITY CONFIG
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -70,21 +70,22 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // 🔓 Public APIs
+                        // Public APIs
                         .requestMatchers("/api/login", "/api/register-admin").permitAll()
 
-                        // 🔓 Health endpoint (IMPORTANT for UptimeRobot)
+                        //  Health endpoint (IMPORTANT for UptimeRobot)
                         .requestMatchers("/health").permitAll()
 
-                        // 🔓 Public GET APIs
+                        //  Public GET APIs
                         .requestMatchers(HttpMethod.GET, "/api/hero/active").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/admin/achievements").permitAll()
                         .requestMatchers(HttpMethod.GET, "/blogs", "/blogs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/courses", "/api/courses/**").permitAll()
 
-                        // 🔒 Admin APIs
+                        //  Admin APIs
                         .requestMatchers("/api/hero/**").hasRole("ADMIN")
 
-                        // 🔒 Everything else protected
+                        //  Everything else protected
                         .anyRequest().authenticated()
                 )
 
@@ -98,7 +99,7 @@ public class SecurityConfig {
                 .build();
     }
 
-    // 🌐 CORS CONFIG
+    //  CORS CONFIG
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
