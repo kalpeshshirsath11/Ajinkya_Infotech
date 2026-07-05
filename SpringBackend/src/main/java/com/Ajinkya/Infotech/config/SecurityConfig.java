@@ -71,7 +71,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // Public APIs
-                        .requestMatchers("/api/login", "/api/register-admin").permitAll()
+                        .requestMatchers("/api/login", "/api/register-admin", "/api/chat").permitAll()
 
                         //  Health endpoint (IMPORTANT for UptimeRobot)
                         .requestMatchers("/health").permitAll()
